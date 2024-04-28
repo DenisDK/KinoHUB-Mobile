@@ -2,16 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kinohub/views/movie_detail_view.dart';
+import 'package:kinohub/API%20service/movie_class.dart';
 
 const apiKey = '13e8cb10efd590bd45c6a7bd2262db14';
 const baseUrl = 'https://api.themoviedb.org/3/search/movie';
-
-class Movie {
-  final String title;
-  final String poster;
-
-  Movie({required this.title, required this.poster});
-}
 
 class MovieSearchScreen extends StatefulWidget {
   @override
@@ -154,12 +149,18 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                                     ),
                                     child: Icon(
                                       Icons.image_not_supported,
-                                      color: Colors.white,
+                                      color: Color(0xFFDEDEDE),
                                       size: 30.0,
                                     ),
                                   ),
                             onTap: () {
-                              // Add functionality for when a movie is tapped
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MovieDetailScreen(
+                                      movieId: movies[index].id),
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -188,15 +189,24 @@ class MovieResponse {
   factory MovieResponse.fromJson(Map<String, dynamic> json) {
     return MovieResponse(
       results: (json['results'] as List).map((item) {
-        if (item.containsKey('poster_path') && item['poster_path'] != null) {
+        if (item.containsKey('id')) {
           return Movie(
+            id: item['id'],
             title: item['title'],
-            poster: 'https://image.tmdb.org/t/p/w500${item['poster_path']}',
+            poster:
+                item.containsKey('poster_path') && item['poster_path'] != null
+                    ? 'https://image.tmdb.org/t/p/w500${item['poster_path']}'
+                    : 'N/A',
           );
         } else {
+          // Handle case when id is missing from API response
           return Movie(
+            id: 0, // Assign a default value or handle it according to your logic
             title: item['title'],
-            poster: 'N/A',
+            poster:
+                item.containsKey('poster_path') && item['poster_path'] != null
+                    ? 'https://image.tmdb.org/t/p/w500${item['poster_path']}'
+                    : 'N/A',
           );
         }
       }).toList(),
