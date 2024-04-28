@@ -10,18 +10,18 @@ class CustomDialogAlert {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color.fromARGB(255, 175, 175, 175), // Колір фону
+          backgroundColor: Colors.grey[800], // Колір фону (темна тема)
           title: Text(
             title,
-            style: TextStyle(
-              color: Colors.black, // Колір тексту заголовку
+            style: const TextStyle(
+              color: Color(0xFFDEDEDE), // Колір тексту заголовку
               fontFamily: 'Roboto',
             ),
           ),
           content: Text(
             content,
-            style: TextStyle(
-              color: Colors.black, // Колір тексту контенту
+            style: const TextStyle(
+              color: Color(0xFFDEDEDE), // Колір тексту контенту
               fontFamily: 'Roboto',
             ),
           ),
@@ -30,10 +30,10 @@ class CustomDialogAlert {
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: Text(
+              child: const Text(
                 'Ні',
                 style: TextStyle(
-                  color: Colors.black, // Колір тексту кнопки ні
+                  color: Color(0xFFDEDEDE), // Колір тексту кнопки "Ні"
                   fontFamily: 'Roboto',
                 ),
               ),
@@ -42,10 +42,10 @@ class CustomDialogAlert {
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: Text(
+              child: const Text(
                 'Так',
                 style: TextStyle(
-                  color: Colors.black, // Колір тексту кнопки так
+                  color: Color(0xFFDEDEDE), // Колір тексту кнопки "Так"
                   fontFamily: 'Roboto',
                 ),
               ),
