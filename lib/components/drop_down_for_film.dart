@@ -56,7 +56,7 @@ class CustomPopupMenuItem extends StatelessWidget {
 void showPopupMenuForMovie(BuildContext context) async {
   String? choice = await showMenu<String>(
     context: context,
-    position: RelativeRect.fromLTRB(1000, 285, 0, 0), // Позиція меню
+    position: RelativeRect.fromLTRB(1000, 285, 1000, 285), // Позиція меню
     color: Color.fromARGB(255, 48, 48, 48), // Колір фону меню і колір кнопок
     items: CustomPopupMenu.choices.map((String choice) {
       return PopupMenuItem<String>(

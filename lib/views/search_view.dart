@@ -67,7 +67,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
 
   void debounceFetch(String value) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
+    _debounce = Timer(const Duration(milliseconds: 220), () {
       fetchMovies(value);
     });
   }
