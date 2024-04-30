@@ -6,9 +6,13 @@ class CustomDialogAlert {
     String title,
     String content,
   ) async {
-    return showDialog<bool>(
+    return showGeneralDialog<bool>(
       context: context,
-      builder: (BuildContext context) {
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5), // Затемнення
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      pageBuilder: (BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation) {
         return AlertDialog(
           backgroundColor: Colors.grey[800], // Колір фону (темна тема)
           title: Text(

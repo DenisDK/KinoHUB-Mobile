@@ -1,14 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kinohub/firebase_options.dart';
 import 'package:kinohub/views/main_menu.dart';
+import 'package:kinohub/views/search_view.dart';
 import 'routes/routes.dart';
 import 'views/login_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await dotenv.load(fileName: "api_key.env");
+
   runApp(
     MaterialApp(
       title: 'KinoHUB',
@@ -23,6 +27,7 @@ void main() async {
       routes: {
         loginRoute: (context) => const LoginView(),
         mainMenuRoute: (context) => const MainMenu(),
+        searchRoute: (context) => MovieSearchScreen(),
       },
     ),
   );

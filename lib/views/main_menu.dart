@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:kinohub/components/drop_down__for_main%20_menu.dart';
-
-import 'search_view.dart';
+import 'package:kinohub/auth/sing_in_with_google.dart';
+import 'package:kinohub/components/alert_dialog_custom.dart';
+import 'package:kinohub/routes/routes.dart';
+import '../components/bottom_appbar_custom.dart';
 
 class MainMenu extends StatelessWidget {
-  const MainMenu({Key? key}) : super(key: key);
+  const MainMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF262626),
         title: Row(
           children: [
             Image.asset(
-              'lib/images/logo.png', // шлях до вашого зображення логотипу
-              height: 35, // Висота зображення
-              width: 35, // Ширина зображення
+              'lib/images/logo.png',
+              height: 35,
+              width: 35,
             ),
             const SizedBox(width: 10), // Простір між логотипом і текстом
             RichText(
@@ -48,52 +50,27 @@ class MainMenu extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MovieSearchScreen()),
-                );
-              }
-            },
             icon: Icon(
-              Icons.search,
+              Icons.exit_to_app,
               color: const Color(0xFFDEDEDE),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              showPopupMenu(context);
+            onPressed: () {
+              _handleSignOut(context);
             },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10.0),
-              width: 40.0,
-              height: 40.0,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2E2E2E), // колір прямокутника
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: const Icon(
-                Icons.account_circle,
-                color: Colors.white,
-                size: 30.0,
-              ),
-            ),
           ),
         ],
       ),
       body: Stack(
-        // Використовуємо Stack для розташування прямокутника
         children: [
           Positioned(
-            top: 20.0, // Позиціонуємо прямокутник відносно верхнього краю
-            left: 20.0, // Відступ зліва
-            right: 20.0, // Відступ зправа
+            top: 20.0,
+            left: 20.0,
+            right: 20.0,
             child: Container(
               height: 30.0,
               decoration: BoxDecoration(
-                color: const Color(0xFF3C8399), // Колір прямокутника
-                borderRadius: BorderRadius.circular(8.0), // Закруглені кути
+                color: const Color(0xFF3C8399),
+                borderRadius: BorderRadius.circular(8.0),
               ),
               child: Row(
                 children: [
@@ -120,6 +97,33 @@ class MainMenu extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: MainBottomNavigationBar(
+        selectedIndex: 0,
+        onTap: (index) {},
+      ),
     );
+  }
+
+  void _handleSignOut(BuildContext context) async {
+    bool? result = await CustomDialogAlert.showConfirmationDialog(
+      context,
+      'Вихід з аккаунту',
+      'Ви впевнені, що хочете вийти з аккаунту?',
+    );
+    if (result != null && result) {
+      bool isUserSignOut = await signOut();
+      if (isUserSignOut) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          loginRoute,
+          (route) => false,
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Не вдалося вийти з аккаунту'),
+        ),
+      );
+    }
   }
 }

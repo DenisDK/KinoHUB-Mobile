@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 
 class CustomPopupMenu {
-  static const String viewed = 'Додати до списку переглянутих';
-  static const String planned = 'Додати до списку запланованих';
-  static const String abandoned = 'Додати до списку покинутих';
+  static const String viewed = 'Переглянутих';
+  static const String planned = 'Запланованих';
+  static const String abandoned = 'Покинутих';
 
   static const List<String> choices = <String>[
     viewed,
@@ -56,7 +56,7 @@ class CustomPopupMenuItem extends StatelessWidget {
 void showPopupMenuForMovie(BuildContext context) async {
   String? choice = await showMenu<String>(
     context: context,
-    position: RelativeRect.fromLTRB(1000, 345, 0, 0), // Позиція меню
+    position: RelativeRect.fromLTRB(1000, 285, 0, 0), // Позиція меню
     color: Color.fromARGB(255, 48, 48, 48), // Колір фону меню і колір кнопок
     items: CustomPopupMenu.choices.map((String choice) {
       return PopupMenuItem<String>(

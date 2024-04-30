@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kinohub/API%20service/movie_class.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:kinohub/components/bottom_appbar_custom.dart';
 import '../components/drop_down_for_film.dart';
 
 class MovieDetailScreen extends StatelessWidget {
@@ -13,15 +14,6 @@ class MovieDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Опис фільму',
-          style: TextStyle(color: Color(0xFFDEDEDE), fontSize: 20.0),
-        ),
-        iconTheme: IconThemeData(
-          color: Color(0xFFDEDEDE),
-        ),
-      ),
       body: FutureBuilder(
         future: fetchMovieDetails(movieId),
         builder: (context, AsyncSnapshot<DetailedMovie> snapshot) {
@@ -36,7 +28,7 @@ class MovieDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Назва фільму над постером
+                  SizedBox(height: 15),
                   Text(
                     movie.title,
                     style: TextStyle(
@@ -45,7 +37,6 @@ class MovieDetailScreen extends StatelessWidget {
                       color: Color(0xFFDEDEDE),
                     ),
                   ),
-
                   SizedBox(height: 10),
                   if (movie.poster != 'N/A')
                     Row(
@@ -90,25 +81,40 @@ class MovieDetailScreen extends StatelessWidget {
                             Container(
                               width: 160.0,
                               height: 60.0,
-                              child: TextButton(
-                                onPressed: () {
-                                  showPopupMenuForMovie(context);
-                                },
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                    Color(0xFF242729),
+                              child: Stack(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      showPopupMenuForMovie(context);
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                        Color(0xFF242729),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Додати до списку',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Color(0xFFDEDEDE),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                child: Text(
-                                  'Додати до списку',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Color(0xFFDEDEDE),
+                                  Positioned(
+                                    right: 8.0,
+                                    top: 0.0,
+                                    bottom: 0.0,
+                                    child: Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Color(0xFFDEDEDE),
+                                      size: 24.0,
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ],
@@ -233,11 +239,15 @@ class MovieDetailScreen extends StatelessWidget {
           }
         },
       ),
+      bottomNavigationBar: MainBottomNavigationBar(
+        selectedIndex: 1,
+        onTap: (index) {},
+      ),
     );
   }
 
   Future<DetailedMovie> fetchMovieDetails(int movieId) async {
-    final apiKey = '13e8cb10efd590bd45c6a7bd2262db14';
+    String apiKey = dotenv.env['API_KEY'] ?? '';
     final baseUrl = 'https://api.themoviedb.org/3/movie';
     final defaultLanguage = 'uk-UA';
     final fallbackLanguage = 'en-US'; // Англійська мова як резерв

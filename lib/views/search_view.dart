@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/views/movie_detail_view.dart';
 import 'package:kinohub/API%20service/movie_class.dart';
 
-const apiKey = '13e8cb10efd590bd45c6a7bd2262db14';
+import '../components/custom_page_route.dart';
+
+String apiKey = dotenv.env['API_KEY'] ?? '';
 const baseUrl = 'https://api.themoviedb.org/3/search/movie';
 
 class MovieSearchScreen extends StatefulWidget {
@@ -71,39 +75,54 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Пошук фільмів',
-          style: TextStyle(color: Color(0xFFDEDEDE), fontSize: 20.0),
-        ),
-        backgroundColor: const Color(0xFF262626),
-        iconTheme: IconThemeData(
-          color: Color(0xFFDEDEDE),
-        ),
-      ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              style: TextStyle(color: Color(0xFFDEDEDE)),
-              onChanged: (value) {
-                debounceFetch(value);
-              },
-              decoration: InputDecoration(
-                labelText: 'Введіть назву фільму',
-                labelStyle: TextStyle(color: Color(0xFFDEDEDE)),
-                prefixIcon: Icon(Icons.search, color: Color(0xFFDEDEDE)),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFDEDEDE)),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFDEDEDE)),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
+          Container(
+            padding: EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
+            decoration: BoxDecoration(
+              color: Color(0xFF262626),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
               ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 10),
+                TextField(
+                  controller: _searchController,
+                  style: TextStyle(color: Color(0xFFDEDEDE)),
+                  onChanged: (value) {
+                    debounceFetch(value);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Введіть назву фільму',
+                    hintStyle:
+                        TextStyle(color: Color(0xFFDEDEDE).withOpacity(0.6)),
+                    prefixIcon: Icon(Icons.search, color: Color(0xFFDEDEDE)),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear, color: Color(0xFFDEDEDE)),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          movies.clear();
+                        });
+                      },
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[800],
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -156,7 +175,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
+                                CustomPageRoute(
                                   builder: (context) => MovieDetailScreen(
                                       movieId: movies[index].id),
                                 ),
@@ -170,12 +189,17 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                 : Center(
                     child: Text(
                       'Немає результатів пошуку',
-                      style:
-                          TextStyle(color: Color(0xFFDEDEDE), fontSize: 16.0),
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 154, 154, 154),
+                          fontSize: 16.0),
                     ),
                   ),
           ),
         ],
+      ),
+      bottomNavigationBar: MainBottomNavigationBar(
+        selectedIndex: 1,
+        onTap: (index) {},
       ),
     );
   }
@@ -199,9 +223,8 @@ class MovieResponse {
                     : 'N/A',
           );
         } else {
-          // Handle case when id is missing from API response
           return Movie(
-            id: 0, // Assign a default value or handle it according to your logic
+            id: 0,
             title: item['title'],
             poster:
                 item.containsKey('poster_path') && item['poster_path'] != null
