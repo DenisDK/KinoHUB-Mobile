@@ -9,12 +9,12 @@ class CustomDialogAlert {
     return showGeneralDialog<bool>(
       context: context,
       barrierDismissible: true,
-      barrierColor: Colors.black.withOpacity(0.5), // Затемнення
+      barrierColor: Colors.black.withOpacity(0.5),
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       pageBuilder: (BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation) {
         return AlertDialog(
-          backgroundColor: Colors.grey[800], // Колір фону (темна тема)
+          backgroundColor: Colors.grey[800], // Колір фону
           title: Text(
             title,
             style: const TextStyle(

@@ -21,7 +21,7 @@ class MainMenu extends StatefulWidget {
 class _MainMenuState extends State<MainMenu> {
   late List<Movie> movies = [];
   bool isLoading = false;
-  int page = 1; // Номер текущей страницы
+  int pageNumber = 1;
 
   late ScrollController _scrollController;
 
@@ -42,13 +42,13 @@ class _MainMenuState extends State<MainMenu> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      // Доскроллили до конца списка, загружаем новые фильмы
+      // Доскроллили до конця списку, загрузили нові фільми
       fetchMovies();
     }
   }
 
   Future<void> fetchMovies() async {
-    if (isLoading) return; // Предотвращаем повторные запросы
+    if (isLoading) return;
 
     setState(() {
       isLoading = true;
@@ -58,7 +58,7 @@ class _MainMenuState extends State<MainMenu> {
     const baseUrl = 'https://api.themoviedb.org';
     final response = await http.get(
       Uri.parse(
-          '$baseUrl/3/movie/popular?api_key=$apiKey&language=uk-UA&page=$page'),
+          '$baseUrl/3/movie/popular?api_key=$apiKey&language=uk-UA&page=$pageNumber'),
     );
 
     if (response.statusCode == 200) {
@@ -66,10 +66,8 @@ class _MainMenuState extends State<MainMenu> {
       final List<Movie> fetchedMovies = [];
 
       for (var movie in jsonData['results']) {
-        // Перевірка, чи є назва фільму англійською або українською мовами
         if (movie['original_language'] == 'en' ||
             movie['original_language'] == 'uk') {
-          // Перевірка, чи такий фільм ще не додано
           if (!movies.any((element) => element.id == movie['id'])) {
             fetchedMovies.add(Movie(
               id: movie['id'],
@@ -83,7 +81,7 @@ class _MainMenuState extends State<MainMenu> {
       setState(() {
         movies.addAll(fetchedMovies);
         isLoading = false;
-        page++; // Увеличиваем номер страницы для следующего запроса
+        pageNumber++;
       });
     } else {
       throw Exception('Failed to load movies');
@@ -251,12 +249,11 @@ class _MainMenuState extends State<MainMenu> {
                       ),
                     );
                   } else if (isLoading) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   } else {
-                    return SizedBox
-                        .shrink(); // Возвращаем пустой виджет, когда все фильмы загружены
+                    return const SizedBox.shrink();
                   }
                 },
               ),

@@ -18,26 +18,26 @@ class MovieDetailScreen extends StatelessWidget {
         future: fetchMovieDetails(movieId),
         builder: (context, AsyncSnapshot<DetailedMovie> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Помилка: ${snapshot.error}'));
           } else {
             DetailedMovie movie = snapshot.data!;
             return SingleChildScrollView(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
                   Text(
                     movie.title,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 26.0,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFFDEDEDE),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   if (movie.poster != 'N/A')
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,7 +50,7 @@ class MovieDetailScreen extends StatelessWidget {
                             width: 190,
                           ),
                         ),
-                        SizedBox(width: 20),
+                        const SizedBox(width: 20),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -67,7 +67,7 @@ class MovieDetailScreen extends StatelessWidget {
                                 child: Text(
                                   'Рейтинг: ${movie.rating}',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18.0,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500,
@@ -76,60 +76,80 @@ class MovieDetailScreen extends StatelessWidget {
                               ),
                             ),
 
-                            SizedBox(height: 10),
-                            // Button to add movie to list
+                            const SizedBox(height: 10),
+
                             Container(
-                              width: 160.0,
-                              height: 60.0,
-                              child: Stack(
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      showPopupMenuForMovie(context);
-                                    },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                        Color(0xFF242729),
+                              width: 165.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                color: Color(0xFF242729),
+                              ),
+                              child: Center(
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  iconSize: 0.0,
+                                  elevation: 16,
+                                  style: const TextStyle(
+                                      color: Color(0xFFDEDEDE), fontSize: 16.0),
+                                  underline: Container(height: 0),
+                                  onChanged: (String? newValue) {
+                                    // сюди нічого додавати не треба)
+                                  },
+                                  items: CustomPopupMenu.choices
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: CustomPopupMenuItem(
+                                        text: value,
+                                        onTap: () {
+                                          // Обробка події при виборі елемента
+                                          switch (value) {
+                                            case CustomPopupMenu.viewed:
+                                              // сюда код чи метод для додавання фільмів в Переглянуті
+                                              break;
+                                            case CustomPopupMenu.planned:
+                                              // сюда код чи метод для додавання фільмів в  Заплановані
+                                              break;
+                                            case CustomPopupMenu.abandoned:
+                                              // сюда код чи метод для додавання фільмів в покинуті
+                                              break;
+                                            default:
+                                          }
+                                        },
                                       ),
-                                    ),
+                                    );
+                                  }).toList(),
+                                  hint: const Center(
                                     child: Text(
                                       'Додати до списку',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 16.0,
-                                        color: Color(0xFFDEDEDE),
-                                      ),
+                                          color: Color(0xFFDEDEDE),
+                                          fontSize: 16.0),
                                     ),
                                   ),
-                                  Positioned(
-                                    right: 8.0,
-                                    top: 0.0,
-                                    bottom: 0.0,
-                                    child: Icon(
-                                      Icons.arrow_drop_down,
-                                      color: Color(0xFFDEDEDE),
-                                      size: 24.0,
-                                    ),
-                                  ),
-                                ],
+                                  dropdownColor:
+                                      Color.fromARGB(255, 48, 48, 48),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
                               ),
                             )
                           ],
                         ),
                       ],
                     ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: Color(0xFF242729),
+                      color: const Color(0xFF242729),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Інформація про фільм:',
                           style: TextStyle(
                             fontSize: 18.0,
@@ -137,57 +157,57 @@ class MovieDetailScreen extends StatelessWidget {
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Container(
                           height: 2,
                           color: Colors.grey,
                           width: double.infinity,
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Жанри: ${movie.genres.isNotEmpty ? movie.genres.join(", ") : "Інформація не знайдена"}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Рік випуску: ${movie.releaseYear}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Режисер: ${movie.director.isNotEmpty ? movie.director : "Інформація не знайдена"}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Вікове обмеження: ${movie.certification.isNotEmpty ? movie.certification : "Інформація не знайдена"}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Країни виробництва: ${movie.productionCountries.isNotEmpty ? movie.productionCountries.join(", ") : "Інформація не знайдена"}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Студія: ${movie.productionStudio.isNotEmpty ? movie.productionStudio : "Інформація не знайдена"}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
@@ -195,17 +215,17 @@ class MovieDetailScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: Color(0xFF242729),
+                      color: const Color(0xFF242729),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Опис фільму:',
                           style: TextStyle(
                             fontSize: 18.0,
@@ -213,19 +233,19 @@ class MovieDetailScreen extends StatelessWidget {
                             color: Color(0xFFDEDEDE),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Container(
                           height: 2,
                           color: Colors.grey,
                           width: double.infinity,
                           margin: EdgeInsets.symmetric(vertical: 8.0),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           movie.overview.isNotEmpty
                               ? movie.overview
                               : 'Інформація не знайдена',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16.0,
                             color: Color(0xFFDEDEDE),
                           ),
@@ -248,9 +268,9 @@ class MovieDetailScreen extends StatelessWidget {
 
   Future<DetailedMovie> fetchMovieDetails(int movieId) async {
     String apiKey = dotenv.env['API_KEY'] ?? '';
-    final baseUrl = 'https://api.themoviedb.org/3/movie';
-    final defaultLanguage = 'uk-UA';
-    final fallbackLanguage = 'en-US'; // Англійська мова як резерв
+    const baseUrl = 'https://api.themoviedb.org/3/movie';
+    const defaultLanguage = 'uk-UA';
+    const fallbackLanguage = 'en-US'; // Англійська мова як резерв
 
     try {
       // Спробуємо завантажити дані про фільм на українській мові

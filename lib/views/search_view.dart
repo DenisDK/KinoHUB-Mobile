@@ -61,7 +61,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
         });
       }
     } else {
-      // Handle error if needed
+      throw Exception('Помилка завантаження даних');
     }
   }
 
@@ -78,8 +78,9 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
       body: Column(
         children: [
           Container(
-            padding: EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
-            decoration: BoxDecoration(
+            padding:
+                const EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
+            decoration: const BoxDecoration(
               color: Color(0xFF262626),
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
@@ -89,20 +90,21 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _searchController,
-                  style: TextStyle(color: Color(0xFFDEDEDE)),
+                  style: const TextStyle(color: Color(0xFFDEDEDE)),
                   onChanged: (value) {
                     debounceFetch(value);
                   },
                   decoration: InputDecoration(
                     hintText: 'Введіть назву фільму',
-                    hintStyle:
-                        TextStyle(color: Color(0xFFDEDEDE).withOpacity(0.6)),
-                    prefixIcon: Icon(Icons.search, color: Color(0xFFDEDEDE)),
+                    hintStyle: TextStyle(
+                        color: const Color(0xFFDEDEDE).withOpacity(0.6)),
+                    prefixIcon:
+                        const Icon(Icons.search, color: Color(0xFFDEDEDE)),
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.clear, color: Color(0xFFDEDEDE)),
+                      icon: const Icon(Icons.clear, color: Color(0xFFDEDEDE)),
                       onPressed: () {
                         _searchController.clear();
                         setState(() {
@@ -140,10 +142,10 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: ListTile(
-                            contentPadding: EdgeInsets.all(12.0),
+                            contentPadding: const EdgeInsets.all(12.0),
                             title: Text(
                               movies[index].title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFFDEDEDE),
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.normal,
@@ -166,7 +168,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                                       color: Colors.grey[600],
                                       borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                    child: Icon(
+                                    child: const Icon(
                                       Icons.image_not_supported,
                                       color: Color(0xFFDEDEDE),
                                       size: 30.0,
@@ -186,7 +188,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                       );
                     },
                   )
-                : Center(
+                : const Center(
                     child: Text(
                       'Немає результатів пошуку',
                       style: TextStyle(

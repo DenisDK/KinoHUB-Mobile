@@ -6,10 +6,10 @@ Future<bool> signInWithGoogle() async {
   try {
     final GoogleSignIn _googleSignIn = GoogleSignIn();
     await _googleSignIn
-        .signOut(); // Вихід зі всіх облікових записів перед входом
+        .signOut(); 
 
     final GoogleSignInAccount? googleSignInAccount = await _googleSignIn
-        .signIn(); // Відобразити вікно вибору облікового запису Google
+        .signIn(); 
 
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
@@ -21,12 +21,12 @@ Future<bool> signInWithGoogle() async {
       );
 
       await FirebaseAuth.instance.signInWithCredential(credential);
-      return true; // Успішно увійшли в обліковий запис
+      return true; 
     }
   } catch (error) {
     print('Failed to sign in with Google: $error');
   }
-  return false; // Не вдалося увійти в обліковий запис
+  return false; 
 }
 
 Future<bool> signOut() async {

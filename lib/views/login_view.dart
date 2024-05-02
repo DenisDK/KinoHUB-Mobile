@@ -59,8 +59,7 @@ class LoginView extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(
-                      height: 25), // Збільшено відступ між текстом та кнопкою
+                  const SizedBox(height: 25), // Відступ між текстом та кнопкою
                   ElevatedButton(
                     onPressed: () async {
                       bool userLogin = await signInWithGoogle();
