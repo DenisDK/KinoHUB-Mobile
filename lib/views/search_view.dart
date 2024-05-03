@@ -1,16 +1,17 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kinohub/API%20service/genre_class.dart';
 import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/views/movie_detail_view.dart';
 import 'package:kinohub/API%20service/movie_class.dart';
-
 import '../components/custom_page_route.dart';
 
 String apiKey = dotenv.env['API_KEY'] ?? '';
 const baseUrl = 'https://api.themoviedb.org/3/search/movie';
+const genreUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 
 class MovieSearchScreen extends StatefulWidget {
   @override
@@ -19,13 +20,18 @@ class MovieSearchScreen extends StatefulWidget {
 
 class _MovieSearchScreenState extends State<MovieSearchScreen> {
   List<Movie> movies = [];
+  List<Genre> genres = [];
   late TextEditingController _searchController;
+  String? _selectedGenre;
   Timer? _debounce;
+  int _currentPage = 1; // Змінна для відстеження поточної сторінки результатів
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _selectedGenre = null;
+    fetchGenres();
   }
 
   @override
@@ -35,14 +41,25 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
     super.dispose();
   }
 
+  Future<void> fetchGenres() async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/genre/movie/list?api_key=$apiKey&language=uk-UA'));
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      setState(() {
+        genres = (jsonData['genres'] as List)
+            .map((genre) => Genre.fromJson(genre))
+            .toList();
+      });
+    } else {
+      throw Exception('Помилка завантаження жанрів');
+    }
+  }
+
   Future<void> fetchMovies(String query) async {
-    final response =
-        await http.get(Uri.https('api.themoviedb.org', '/3/search/movie', {
-      'api_key': apiKey,
-      'query': query,
-      'language': 'uk-UA',
-      'page': '1',
-    }));
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/search/movie?api_key=$apiKey&query=$query&language=uk-UA&page=1'));
 
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
@@ -54,6 +71,39 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                   movie.poster != 'N/A' &&
                   RegExp(r'[а-яА-ЯёЁ]').hasMatch(movie.title))
               .toList();
+        });
+      } else {
+        setState(() {
+          movies.clear();
+        });
+      }
+    } else {
+      throw Exception('Помилка завантаження даних');
+    }
+  }
+
+  Future<void> fetchMoviesByGenre(String genreId, int page) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=$genreId&language=uk-UA&page=$page'));
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      if (jsonData.containsKey('results')) {
+        final response = MovieResponse.fromJson(jsonData);
+        setState(() {
+          if (page == 1) {
+            movies = response.results
+                .where((movie) =>
+                    movie.poster != 'N/A' &&
+                    RegExp(r'[а-яА-ЯёЁ]').hasMatch(movie.title))
+                .toList();
+          } else {
+            movies.addAll(response.results
+                .where((movie) =>
+                    movie.poster != 'N/A' &&
+                    RegExp(r'[а-яА-ЯёЁ]').hasMatch(movie.title))
+                .toList());
+          }
         });
       } else {
         setState(() {
@@ -93,35 +143,78 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                 const SizedBox(height: 10),
                 TextField(
                   controller: _searchController,
-                  style: const TextStyle(color: Color(0xFFDEDEDE)),
                   onChanged: (value) {
                     debounceFetch(value);
                   },
                   decoration: InputDecoration(
-                    hintText: 'Введіть назву фільму',
-                    hintStyle: TextStyle(
-                        color: const Color(0xFFDEDEDE).withOpacity(0.6)),
-                    prefixIcon:
-                        const Icon(Icons.search, color: Color(0xFFDEDEDE)),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear, color: Color(0xFFDEDEDE)),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {
-                          movies.clear();
-                        });
-                      },
+                    labelText: 'Пошук за назвою',
+                    labelStyle: TextStyle(color: Color(0xFFDEDEDE)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.grey[800],
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear, color: Color(0xFFDEDEDE)),
+                      onPressed: () {
+                        setState(() {
+                          _searchController.clear();
+                        });
+                        fetchMovies('');
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  dropdownColor: Colors.grey[800],
+                  value: _selectedGenre,
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: null,
+                      child: Text(
+                        'Пошук за жанром',
+                        style: TextStyle(
+                            color: Color(0xFFDEDEDE),
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                    ...genres.map((genre) {
+                      return DropdownMenuItem<String>(
+                        value: genre.id.toString(),
+                        child: Text(
+                          genre.name,
+                          style: TextStyle(color: Color(0xFFDEDEDE)),
+                        ),
+                      );
+                    }),
+                  ],
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedGenre = newValue;
+                      _currentPage =
+                          1; // При зміні жанру повертаємося на першу сторінку
+                      fetchMoviesByGenre(newValue ?? '', _currentPage);
+                    });
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                    filled: true,
+                    fillColor: Colors.grey[800],
+                    suffixIcon: _selectedGenre != null
+                        ? IconButton(
+                            icon: Icon(Icons.clear, color: Color(0xFFDEDEDE)),
+                            onPressed: () {
+                              setState(() {
+                                _selectedGenre = null;
+                                movies.clear();
+                              });
+                              fetchMovies('');
+                            },
+                          )
+                        : null,
                   ),
                 ),
               ],
@@ -130,62 +223,69 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
           Expanded(
             child: movies.isNotEmpty
                 ? ListView.builder(
-                    itemCount: movies.length,
+                    itemCount: movies.length +
+                        1, // Додатковий елемент для кнопки "Завантажити ще"
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        child: Card(
-                          color: Colors.grey[800],
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.all(12.0),
-                            title: Text(
-                              movies[index].title,
-                              style: const TextStyle(
-                                color: Color(0xFFDEDEDE),
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.normal,
-                              ),
+                      if (index == movies.length) {
+                        // Перевірка, чи досягнута остання сторінка
+                        return _buildLoadMoreButton();
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: Card(
+                            color: Colors.grey[800],
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                            leading: movies[index].poster != 'N/A'
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                    child: Image.network(
-                                      movies[index].poster,
-                                      width: 80.0, // Increased width
-                                      height: 120.0, // Increased height
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Container(
-                                    width: 80.0, // Increased width
-                                    height: 120.0, // Increased height
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[600],
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                    child: const Icon(
-                                      Icons.image_not_supported,
-                                      color: Color(0xFFDEDEDE),
-                                      size: 30.0,
-                                    ),
-                                  ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                CustomPageRoute(
-                                  builder: (context) => MovieDetailScreen(
-                                      movieId: movies[index].id),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(12.0),
+                              title: Text(
+                                movies[index].title,
+                                style: const TextStyle(
+                                  color: Color(0xFFDEDEDE),
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.normal,
                                 ),
-                              );
-                            },
+                              ),
+                              leading: movies[index].poster != 'N/A'
+                                  ? ClipRRect(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      child: Image.network(
+                                        movies[index].poster,
+                                        width: 80.0,
+                                        height: 120.0,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 80.0,
+                                      height: 120.0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[600],
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      child: const Icon(
+                                        Icons.image_not_supported,
+                                        color: Color(0xFFDEDEDE),
+                                        size: 30.0,
+                                      ),
+                                    ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  CustomPageRoute(
+                                    builder: (context) => MovieDetailScreen(
+                                        movieId: movies[index].id),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                   )
                 : const Center(
@@ -202,6 +302,32 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
       bottomNavigationBar: MainBottomNavigationBar(
         selectedIndex: 1,
         onTap: (index) {},
+      ),
+    );
+  }
+
+  Widget _buildLoadMoreButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 15.0),
+        child: ElevatedButton(
+          onPressed: () {
+            _currentPage++;
+            fetchMoviesByGenre(_selectedGenre ?? '', _currentPage);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF242729),
+            padding: EdgeInsets.symmetric(vertical: 15.0),
+            minimumSize: Size(150, 0),
+          ),
+          child: const Text(
+            'Завантажити ще',
+            style: TextStyle(
+              color: Color(0xFFDEDEDE),
+            ),
+          ),
+        ),
       ),
     );
   }

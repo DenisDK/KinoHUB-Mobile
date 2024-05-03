@@ -12,9 +12,9 @@ class DetailedMovie extends Movie {
   final List<String> genres;
   final int releaseYear;
   final String director;
-  final String certification; 
-  final List<String> productionCountries; 
-  final String productionStudio; 
+  final String certification;
+  final List<String> productionCountries;
+  final String productionStudio;
 
   DetailedMovie({
     required int id,
