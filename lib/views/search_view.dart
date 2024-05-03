@@ -14,6 +14,8 @@ const baseUrl = 'https://api.themoviedb.org/3/search/movie';
 const genreUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 
 class MovieSearchScreen extends StatefulWidget {
+  const MovieSearchScreen({super.key});
+
   @override
   _MovieSearchScreenState createState() => _MovieSearchScreenState();
 }
@@ -146,16 +148,25 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                   onChanged: (value) {
                     debounceFetch(value);
                   },
+                  cursorColor: const Color(0xFFFF5200),
                   decoration: InputDecoration(
                     labelText: 'Пошук за назвою',
-                    labelStyle: TextStyle(color: Color(0xFFDEDEDE)),
+                    labelStyle: const TextStyle(
+                        color: Color(0xFFDEDEDE)), // Колір тексту мітки
                     border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                        color: Colors.transparent,
+                      ),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.grey[800],
                     suffixIcon: IconButton(
-                      icon: Icon(Icons.clear, color: Color(0xFFDEDEDE)),
+                      icon: const Icon(Icons.clear,
+                          color: Color(0xFFDEDEDE)), // Колір іконки
                       onPressed: () {
                         setState(() {
                           _searchController.clear();
@@ -164,6 +175,8 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                       },
                     ),
                   ),
+                  style: const TextStyle(
+                      color: Color(0xFFDEDEDE)), // Колір тексту введення
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
@@ -184,7 +197,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                         value: genre.id.toString(),
                         child: Text(
                           genre.name,
-                          style: TextStyle(color: Color(0xFFDEDEDE)),
+                          style: const TextStyle(color: Color(0xFFDEDEDE)),
                         ),
                       );
                     }),
@@ -201,11 +214,18 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Colors
+                              .transparent), // Встановлюємо прозору обводку
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                     filled: true,
                     fillColor: Colors.grey[800],
                     suffixIcon: _selectedGenre != null
                         ? IconButton(
-                            icon: Icon(Icons.clear, color: Color(0xFFDEDEDE)),
+                            icon: const Icon(Icons.clear,
+                                color: Color(0xFFDEDEDE)),
                             onPressed: () {
                               setState(() {
                                 _selectedGenre = null;
@@ -317,9 +337,9 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
             fetchMoviesByGenre(_selectedGenre ?? '', _currentPage);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFF242729),
-            padding: EdgeInsets.symmetric(vertical: 15.0),
-            minimumSize: Size(150, 0),
+            backgroundColor: const Color(0xFF242729),
+            padding: const EdgeInsets.symmetric(vertical: 15.0),
+            minimumSize: const Size(150, 0),
           ),
           child: const Text(
             'Завантажити ще',

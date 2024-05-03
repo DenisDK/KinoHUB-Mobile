@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/views/main_menu.dart';
 import 'package:kinohub/views/search_view.dart';
+import 'package:kinohub/views/user_profile_view.dart';
 
 class MainBottomNavigationBar extends StatefulWidget {
   final int selectedIndex;
@@ -45,6 +46,12 @@ class _MainBottomNavigationBarState extends State<MainBottomNavigationBar> {
             );
             break;
           case 2:
+            Navigator.pushReplacement(
+              context,
+              CustomPageRoute(
+                builder: (context) => UserProfile(),
+              ),
+            );
             break;
         }
       },

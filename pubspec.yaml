@@ -39,6 +39,7 @@ dependencies:
   flutter_facebook_auth: ^4.0.0
   http: ^0.13.3
   flutter_dotenv: ^5.1.0
+  image_picker: ^0.8.3+3
 
 
   # The following adds the Cupertino Icons font to your application.

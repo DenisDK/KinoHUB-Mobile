@@ -131,9 +131,9 @@ class _MainMenuState extends State<MainMenu> {
         ),
         actions: [
           IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.exit_to_app,
-              color: const Color(0xFFDEDEDE),
+              color: Color(0xFFDEDEDE),
             ),
             onPressed: () {
               _handleSignOut(context);
@@ -162,8 +162,8 @@ class _MainMenuState extends State<MainMenu> {
                       color: const Color(0xFF62A4AD),
                     ),
                   ),
-                  SizedBox(width: 10),
-                  Text(
+                  const SizedBox(width: 10),
+                  const Text(
                     'Цікаві фільми',
                     style: TextStyle(
                       color: Color.fromARGB(255, 0, 0, 0),
@@ -184,7 +184,7 @@ class _MainMenuState extends State<MainMenu> {
               height: MediaQuery.of(context).size.height - 150,
               child: GridView.builder(
                 controller: _scrollController,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.7,
                   crossAxisSpacing: 35.0,
@@ -215,7 +215,7 @@ class _MainMenuState extends State<MainMenu> {
                                 color: Colors.black.withOpacity(0.5),
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: Offset(0, 3),
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
@@ -235,8 +235,8 @@ class _MainMenuState extends State<MainMenu> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   movie.title,
-                                  style: TextStyle(
-                                    color: const Color(0xFFDEDEDE),
+                                  style: const TextStyle(
+                                    color: Color(0xFFDEDEDE),
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,

@@ -1,10 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/firebase_options.dart';
 import 'package:kinohub/views/main_menu.dart';
+import 'package:kinohub/views/register_view.dart';
 import 'package:kinohub/views/search_view.dart';
+import 'package:kinohub/views/user_profile_view.dart';
 import 'routes/routes.dart';
 import 'views/login_view.dart';
 
@@ -27,7 +31,9 @@ void main() async {
       routes: {
         loginRoute: (context) => const LoginView(),
         mainMenuRoute: (context) => const MainMenu(),
-        searchRoute: (context) => MovieSearchScreen(),
+        searchRoute: (context) => const MovieSearchScreen(),
+        userProfileRoute: (context) => const UserProfile(),
+        userRegistrationRoute: (context) => const RegistrationView(),
       },
     ),
   );
@@ -45,10 +51,29 @@ class HomePage extends StatelessWidget {
           case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
             if (user != null) {
-              return const MainMenu();
+              FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(user.uid)
+                  .get()
+                  .then((userData) {
+                if (userData.exists && userData['nickname'] != null) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    mainMenuRoute,
+                    (route) => false,
+                  );
+                } else {
+                  Navigator.pushReplacement(
+                    context,
+                    CustomPageRoute(
+                      builder: (context) => const RegistrationView(),
+                    ),
+                  );
+                }
+              });
             } else {
               return const LoginView();
             }
+            break;
           default:
             return Scaffold(
               backgroundColor: Colors.grey[200],
@@ -60,6 +85,9 @@ class HomePage extends StatelessWidget {
               ),
             );
         }
+        // Додано інструкцію return на випадок, якщо жоден з випадків не виконається
+        return const SizedBox
+            .shrink(); // або будь-який інший віджет, який ви хочете повернути
       },
     );
   }
