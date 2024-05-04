@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kinohub/routes/routes.dart';
 
 class RegistrationView extends StatefulWidget {
-  const RegistrationView({super.key});
+  const RegistrationView({Key? key}) : super(key: key);
 
   @override
   _RegistrationViewState createState() => _RegistrationViewState();
@@ -55,9 +55,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                         const Color(0xFFDEDEDE),
                       ),
                     ),
-                    onPressed: () {
-                      _pickImage();
-                    },
+                    onPressed: _pickImage,
                     child: const Text('Виберіть фото профілю'),
                   ),
                 ),
@@ -96,50 +94,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                         const Color(0xFFDEDEDE),
                       ),
                     ),
-                    onPressed: () async {
-                      String nickname = _nicknameController.text.trim();
-
-                      if (nickname.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Нікнейм не може бути порожнім'),
-                          ),
-                        );
-                        return;
-                      }
-
-                      if (_image != null) {
-                        String imageUrl = await _uploadImage();
-
-                        final querySnapshot = await FirebaseFirestore.instance
-                            .collection('Users')
-                            .where('nickname', isEqualTo: nickname)
-                            .get();
-
-                        if (querySnapshot.docs.isNotEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Користувач з таким нікнеймом вже існує. Виберіть інший нікнейм.'),
-                            ),
-                          );
-                          return;
-                        }
-
-                        await saveUserDataToFirebase(nickname, imageUrl);
-
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          mainMenuRoute,
-                          (route) => false,
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Оберіть фото профілю'),
-                          ),
-                        );
-                      }
-                    },
+                    onPressed: _registerUser,
                     child: const Text('Реєстрація'),
                   ),
                 ),
@@ -153,9 +108,7 @@ class _RegistrationViewState extends State<RegistrationView> {
 
   Widget _buildAvatar() {
     return GestureDetector(
-      onTap: () {
-        _pickImage();
-      },
+      onTap: _pickImage,
       child: CircleAvatar(
         radius: 50,
         backgroundColor: Colors.grey[800],
@@ -187,6 +140,43 @@ class _RegistrationViewState extends State<RegistrationView> {
         _image = File(pickedFile.path);
       });
     }
+  }
+
+  Future<void> _registerUser() async {
+    String nickname = _nicknameController.text.trim();
+
+    if (nickname.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Нікнейм не може бути порожнім'),
+        ),
+      );
+      return;
+    }
+
+    String imageUrl = _image != null ? await _uploadImage() : '';
+
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('Users')
+        .where('nickname', isEqualTo: nickname)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Користувач з таким нікнеймом вже існує. Виберіть інший нікнейм.'),
+        ),
+      );
+      return;
+    }
+
+    await saveUserDataToFirebase(nickname, imageUrl);
+
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      mainMenuRoute,
+      (route) => false,
+    );
   }
 
   Future<String> _uploadImage() async {
