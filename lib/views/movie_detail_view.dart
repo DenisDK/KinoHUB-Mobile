@@ -1,21 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kinohub/API%20service/movie_class.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kinohub/components/bottom_appbar_custom.dart';
+import 'package:kinohub/firestore_database/add_films_to_list.dart';
 import '../components/drop_down_for_film.dart';
 
-class MovieDetailScreen extends StatelessWidget {
+class MovieDetailScreen extends StatefulWidget {
   final int movieId;
 
-  const MovieDetailScreen({Key? key, required this.movieId}) : super(key: key);
+  const MovieDetailScreen({super.key, required this.movieId});
+
+  @override
+  _MovieDetailScreenState createState() => _MovieDetailScreenState();
+}
+
+class _MovieDetailScreenState extends State<MovieDetailScreen> {
+  String buttonName = 'Додати до списку';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: fetchMovieDetails(movieId),
+        future: fetchMovieDetails(widget.movieId),
         builder: (context, AsyncSnapshot<DetailedMovie> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -102,17 +112,31 @@ class MovieDetailScreen extends StatelessWidget {
                                       value: value,
                                       child: CustomPopupMenuItem(
                                         text: value,
-                                        onTap: () {
-                                          // Обробка події при виборі елемента
+                                        onTap: () async {
                                           switch (value) {
                                             case CustomPopupMenu.viewed:
-                                              // сюда код чи метод для додавання фільмів в Переглянуті
+                                              bool isAddedToWatched =
+                                                  await addToWatchedList(
+                                                      context, movie.id);
+                                              if (isAddedToWatched) {
+                                                updateButtonName('Переглянуто');
+                                              }
                                               break;
                                             case CustomPopupMenu.planned:
-                                              // сюда код чи метод для додавання фільмів в  Заплановані
+                                              bool isAddedToPlanned =
+                                                  await addToPlannedList(
+                                                      context, movie.id);
+                                              if (isAddedToPlanned) {
+                                                updateButtonName('Заплановано');
+                                              }
                                               break;
                                             case CustomPopupMenu.abandoned:
-                                              // сюда код чи метод для додавання фільмів в покинуті
+                                              bool isAddedToAbandoned =
+                                                  await addToAbandonedList(
+                                                      context, movie.id);
+                                              if (isAddedToAbandoned) {
+                                                updateButtonName('Покинуто');
+                                              }
                                               break;
                                             default:
                                           }
@@ -120,18 +144,42 @@ class MovieDetailScreen extends StatelessWidget {
                                       ),
                                     );
                                   }).toList(),
-                                  hint: const Center(
+                                  hint: Center(
                                     child: Text(
-                                      'Додати до списку',
+                                      buttonName,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Color(0xFFDEDEDE),
                                           fontSize: 16.0),
                                     ),
                                   ),
                                   dropdownColor:
-                                      Color.fromARGB(255, 48, 48, 48),
+                                      const Color.fromARGB(255, 48, 48, 48),
                                   borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Container(
+                              width: 165.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                color: const Color(0xFF242729),
+                              ),
+                              child: Center(
+                                child: TextButton(
+                                  onPressed: () async {
+                                    await removeFromAllList(context, movie.id);
+                                    updateButtonName('Додати до списку');
+                                  },
+                                  child: const Text(
+                                    'Видалити зі списку',
+                                    style: TextStyle(
+                                        color: Color(0xFFDEDEDE),
+                                        fontSize: 15.4,
+                                        fontWeight: FontWeight.normal),
+                                  ),
                                 ),
                               ),
                             )
@@ -348,6 +396,56 @@ class MovieDetailScreen extends StatelessWidget {
     } catch (e) {
       throw Exception('Помилка при завантаженні даних про фільм: $e');
     }
+  }
+
+  Future<void> updateButtonName(String value) async {
+    setState(() {
+      buttonName = value;
+    });
+  }
+
+  Future<void> checkIfMovieAdded(BuildContext context, int movieId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userRef =
+          FirebaseFirestore.instance.collection('Users').doc(user.uid);
+
+      try {
+        final lists = ['WatchedMovies', 'PlannedMovies', 'AbandonedMovies'];
+
+        for (var listName in lists) {
+          final snapshot = await userRef
+              .collection(listName)
+              .where('filmID', isEqualTo: movieId)
+              .get();
+
+          if (snapshot.docs.isNotEmpty) {
+            switch (listName) {
+              case 'WatchedMovies':
+                updateButtonName('Переглянуто');
+                break;
+              case 'PlannedMovies':
+                updateButtonName('Заплановано');
+                break;
+              case 'AbandonedMovies':
+                updateButtonName('Покинуто');
+                break;
+            }
+            return;
+          }
+        }
+
+        // Якщо фільм не знайдено в жодному списку, назва кнопки залишається незмінною
+      } catch (e) {
+        print('Помилка під час перевірки фільму у списку користувача: $e');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkIfMovieAdded(context, widget.movieId);
   }
 
   // Функція для перевірки доступності тексту на заданій мові
