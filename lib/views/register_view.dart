@@ -182,7 +182,11 @@ class _RegistrationViewState extends State<RegistrationView> {
   Future<String> _uploadImage() async {
     final Reference storageRef =
         FirebaseStorage.instance.ref().child('profile_images');
-    final TaskSnapshot uploadTask = await storageRef.putFile(_image!);
+
+    String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    final TaskSnapshot uploadTask =
+        await storageRef.child(fileName).putFile(_image!);
     final imageUrl = await uploadTask.ref.getDownloadURL();
     return imageUrl;
   }

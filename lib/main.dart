@@ -8,6 +8,7 @@ import 'package:kinohub/firebase_options.dart';
 import 'package:kinohub/views/main_menu.dart';
 import 'package:kinohub/views/register_view.dart';
 import 'package:kinohub/views/search_view.dart';
+import 'package:kinohub/views/settings_view.dart';
 import 'package:kinohub/views/user_profile_view.dart';
 import 'routes/routes.dart';
 import 'views/login_view.dart';
@@ -34,6 +35,7 @@ void main() async {
         searchRoute: (context) => const MovieSearchScreen(),
         userProfileRoute: (context) => const UserProfile(),
         userRegistrationRoute: (context) => const RegistrationView(),
+        settingsRoute: (context) => const SettingsView(),
       },
     ),
   );
