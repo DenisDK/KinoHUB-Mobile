@@ -19,6 +19,7 @@ class _SettingsViewState extends State<SettingsView> {
   User? user = FirebaseAuth.instance.currentUser;
   File? _image;
   var userData;
+  TextEditingController _nicknameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -65,8 +66,25 @@ class _SettingsViewState extends State<SettingsView> {
                       ),
                     ),
                     onPressed: _pickImage,
-                    child: const Text('Змінити фото'),
+                    child: const Text('Змінити фото', style: TextStyle(fontSize: 16),),
                   ),
+                const Padding(padding: EdgeInsets.only(top: 20)),
+                SizedBox(
+                  height: 70,
+                  width: 350,
+                  child: TextField(
+                  style: const TextStyle(
+                    color:  Color(0xFFDEDEDE),
+                    fontSize: 18,
+                  ),
+                  controller: _nicknameController,
+                  decoration: const InputDecoration(
+                    labelText: 'New nickname',
+                    border: OutlineInputBorder(),
+                    fillColor: Color(0xFFDEDEDE)
+                  ),
+                  ),
+                ),
                 const Padding(padding: EdgeInsets.only(top: 20)),
                 ElevatedButton(
                   style: ButtonStyle(
@@ -77,7 +95,7 @@ class _SettingsViewState extends State<SettingsView> {
                     ),
                   ),
                   onPressed: _updateUserProfileImage,
-                  child: const Text('Зберегти зміни'),
+                  child: const Text('Зберегти зміни', style: TextStyle(fontSize: 16),),
                 ),
             ],
             ),
@@ -144,6 +162,17 @@ class _SettingsViewState extends State<SettingsView> {
       await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
         'profile_image': imageUrl,
       });
+      }
+      final String? newNickname = _nicknameController.text.trim();
+      if (newNickname != null && newNickname.isNotEmpty) {
+        await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+        'nickname': newNickname,
+      });
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Зміни успішно збережено!'),
+      ),
+      );
     }
-}
 }
