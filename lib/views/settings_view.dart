@@ -19,7 +19,6 @@ class _SettingsViewState extends State<SettingsView> {
   User? user = FirebaseAuth.instance.currentUser;
   File? _image;
   var userData;
-  bool isChanged = false;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
@@ -68,6 +67,18 @@ class _SettingsViewState extends State<SettingsView> {
                     onPressed: _pickImage,
                     child: const Text('Змінити фото'),
                   ),
+                const Padding(padding: EdgeInsets.only(top: 20)),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(const Color(0xFF242729)),
+                    foregroundColor: MaterialStateProperty.all(
+                      const Color(0xFFDEDEDE),
+                    ),
+                  ),
+                  onPressed: _updateUserProfileImage,
+                  child: const Text('Зберегти зміни'),
+                ),
             ],
             ),
           ),
@@ -93,7 +104,7 @@ class _SettingsViewState extends State<SettingsView> {
                 fit: BoxFit.cover,
               ),
             )
-          : userData['profile_image'] != null
+            : userData['profile_image'] != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(60),
                   child: Image.network(
@@ -117,9 +128,22 @@ class _SettingsViewState extends State<SettingsView> {
 
     if (pickedFile != null) {
       setState(() {
-        isChanged = true;
         _image = File(pickedFile.path);
       });
     }
   }
+  Future<void> _updateUserProfileImage() async {
+    if(_image != null){
+      // Отримання посилання на Firebase Storage та завантаження нового зображення
+      final Reference storageRef = FirebaseStorage.instance.ref().child('profile_images');
+      String fileName = '${user!.uid}.jpg';
+      final TaskSnapshot uploadTask = await storageRef.child(fileName).putFile(_image!);
+      final imageUrl = await uploadTask.ref.getDownloadURL();
+
+      // Оновлення посилання на зображення в базі даних Firestore
+      await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+        'profile_image': imageUrl,
+      });
+    }
+}
 }
