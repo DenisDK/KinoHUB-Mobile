@@ -5,11 +5,13 @@ class CustomPopupMenu {
   static const String viewed = 'Переглянутих';
   static const String planned = 'Запланованих';
   static const String abandoned = 'Покинутих';
+  static const String delete = 'Видалити зі списку';
 
   static const List<String> choices = <String>[
     viewed,
     planned,
     abandoned,
+    delete,
   ];
 }
 

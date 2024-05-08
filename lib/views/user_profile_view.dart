@@ -16,7 +16,10 @@ class UserProfile extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('Users').doc(user!.uid).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user!.uid)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(
@@ -72,9 +75,11 @@ class UserProfile extends StatelessWidget {
                     color: Color(0xFFDEDEDE),
                   ),
                   onPressed: () {
-                    Navigator.pushReplacement(context, CustomPageRoute(
-                      builder: (context) => const SettingsView(),
-                    ));
+                    Navigator.pushReplacement(
+                        context,
+                        CustomPageRoute(
+                          builder: (context) => const SettingsView(),
+                        ));
                   },
                 ),
               ],
@@ -85,13 +90,15 @@ class UserProfile extends StatelessWidget {
                   children: [
                     const Padding(padding: EdgeInsets.only(top: 20)),
                     CircleAvatar(
-                      backgroundImage: NetworkImage(userData['profile_image'] ?? ''),
+                      backgroundImage:
+                          NetworkImage(userData['profile_image'] ?? ''),
                       radius: 60,
                     ),
                     const Padding(padding: EdgeInsets.only(top: 15)),
                     Text(
                       userData['nickname'] ?? '',
-                      style: const TextStyle(color: Color(0xFFDEDEDE), fontSize: 27),
+                      style: const TextStyle(
+                          color: Color(0xFFDEDEDE), fontSize: 27),
                     ),
                     const Padding(padding: EdgeInsets.only(top: 30)),
                     const Text(
@@ -112,23 +119,25 @@ class UserProfile extends StatelessWidget {
                           itemCount: 8,
                           itemBuilder: (context, index) {
                             return Container(
-                              alignment: Alignment.center,
-                              width: 120,
-                              child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq6ZeoZMtqemS0k5w0ylnONNLWu1426xbXpeUJTbEI4w&s'),
-                                    radius: 30,
-                                  ),
-                                  Padding(padding: EdgeInsets.only(top: 5)),
-                                  Text(
-                                    'AlexStavok',
-                                    style: TextStyle(color: Color(0xFFDEDEDE), fontSize: 13),
-                                  )
-                                ],
-                              )
-                            );
+                                alignment: Alignment.center,
+                                width: 120,
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq6ZeoZMtqemS0k5w0ylnONNLWu1426xbXpeUJTbEI4w&s'),
+                                      radius: 30,
+                                    ),
+                                    Padding(padding: EdgeInsets.only(top: 5)),
+                                    Text(
+                                      'AlexStavok',
+                                      style: TextStyle(
+                                          color: Color(0xFFDEDEDE),
+                                          fontSize: 13),
+                                    )
+                                  ],
+                                ));
                           },
                         ),
                       ),
