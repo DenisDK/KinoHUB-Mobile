@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,10 +19,14 @@ class _SettingsViewState extends State<SettingsView> {
   File? _image;
   var userData;
   TextEditingController _nicknameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('Users').doc(user!.uid).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user!.uid)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(
@@ -32,115 +35,157 @@ class _SettingsViewState extends State<SettingsView> {
             ),
           );
         } else {
-        userData = snapshot.data!.data() as Map<String, dynamic>;
-        return Scaffold(
-        appBar: AppBar(
-          title: const Text('Змінити профіль',
-          style: 
-            TextStyle(color: Color(0xFFD3D3D3),),
-          ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back), 
-            color: const Color(0xFFD3D3D3),
-            onPressed: (){
-              Navigator.pushReplacement(context, CustomPageRoute(
-              builder: (context) => const UserProfile(),
-              ));
-            },
-          )
-        ),
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              children: [
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                _buildAvatar(),
-                const Padding(padding: EdgeInsets.only(top: 5)),
-                ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(const Color(0xFF242729)),
-                      foregroundColor: MaterialStateProperty.all(
-                        const Color(0xFFDEDEDE),
-                      ),
-                    ),
-                    onPressed: _pickImage,
-                    child: const Text('Змінити фото', style: TextStyle(fontSize: 16),),
-                  ),
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                SizedBox(
-                  height: 70,
-                  width: 350,
-                  child: TextField(
-                  style: const TextStyle(
-                    color:  Color(0xFFDEDEDE),
-                    fontSize: 18,
-                  ),
-                  controller: _nicknameController,
-                  decoration: const InputDecoration(
-                    labelText: 'New nickname',
-                    border: OutlineInputBorder(),
-                    fillColor: Color(0xFFDEDEDE)
-                  ),
-                  ),
+          userData = snapshot.data!.data() as Map<String, dynamic>;
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text(
+                'Змінити профіль',
+                style: TextStyle(
+                  color: Color(0xFFD3D3D3),
+                  fontSize: 20,
                 ),
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(const Color(0xFF242729)),
-                    foregroundColor: MaterialStateProperty.all(
-                      const Color(0xFFDEDEDE),
+              ),
+              centerTitle: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                color: const Color(0xFFD3D3D3),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    CustomPageRoute(
+                      builder: (context) => const UserProfile(),
                     ),
-                  ),
-                  onPressed: _updateUserProfileImage,
-                  child: const Text('Зберегти зміни', style: TextStyle(fontSize: 16),),
-                ),
-            ],
+                  );
+                },
+              ),
             ),
-          ),
-        )
-        );
+            body: SafeArea(
+              child: Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.width * 1.2,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF262626),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildAvatar(),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          minimumSize:
+                              MaterialStateProperty.all(const Size(185, 50)),
+                          backgroundColor: MaterialStateProperty.all(
+                              const Color(0xFF242729)),
+                          foregroundColor: MaterialStateProperty.all(
+                              const Color(0xFFDEDEDE)),
+                        ),
+                        onPressed: _pickImage,
+                        child: const Text(
+                          'Змінити фото',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.normal),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      TextField(
+                        controller: _nicknameController,
+                        cursorColor: const Color(0xFFFF5200),
+                        decoration: InputDecoration(
+                          labelText: 'Новий нікнейм',
+                          labelStyle: const TextStyle(
+                            color: Color(0xFFDEDEDE),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.transparent,
+                            ),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey[800],
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              _nicknameController.clear();
+                            },
+                            icon: const Icon(Icons.clear,
+                                color: Color(0xFFDEDEDE)),
+                          ),
+                        ),
+                        style: const TextStyle(color: Color(0xFFDEDEDE)),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          minimumSize:
+                              MaterialStateProperty.all(const Size(185, 50)),
+                          backgroundColor: MaterialStateProperty.all(
+                              const Color(0xFF242729)),
+                          foregroundColor: MaterialStateProperty.all(
+                              const Color(0xFFDEDEDE)),
+                        ),
+                        onPressed: _updateUserProfileImage,
+                        child: const Text(
+                          'Зберегти зміни',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.normal),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
         }
-      }
+      },
     );
   }
+
   Widget _buildAvatar() {
-  return GestureDetector(
-    onTap: _pickImage,
-    child: CircleAvatar(
-      radius: 60,
-      backgroundColor: Colors.grey[800],
-      child: _image != null
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(60),
-              child: Image.file(
-                _image!,
-                width: 120,
-                height: 120,
-                fit: BoxFit.cover,
-              ),
-            )
-            : userData['profile_image'] != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(60),
-                  child: Image.network(
-                    userData['profile_image'],
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : const Icon(
-                  Icons.person,
-                  size: 50,
-                  color: Colors.white,
+    return GestureDetector(
+      onTap: _pickImage,
+      child: CircleAvatar(
+        radius: 80,
+        backgroundColor: Colors.grey[800],
+        child: _image != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(80),
+                child: Image.file(
+                  _image!,
+                  width: 160,
+                  height: 160,
+                  fit: BoxFit.cover,
                 ),
-    ),
-  );
-}
-    Future<void> _pickImage() async {
+              )
+            : userData['profile_image'] != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(80),
+                    child: Image.network(
+                      userData['profile_image'],
+                      width: 160,
+                      height: 160,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : const Icon(
+                    Icons.person,
+                    size: 80,
+                    color: Colors.white,
+                  ),
+      ),
+    );
+  }
+
+  Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -150,29 +195,59 @@ class _SettingsViewState extends State<SettingsView> {
       });
     }
   }
+
   Future<void> _updateUserProfileImage() async {
-    if(_image != null){
-      // Отримання посилання на Firebase Storage та завантаження нового зображення
-      final Reference storageRef = FirebaseStorage.instance.ref().child('profile_images');
+    bool isDataChanged = false;
+
+    if (_image != null) {
+      final Reference storageRef =
+          FirebaseStorage.instance.ref().child('profile_images');
       String fileName = '${user!.uid}.jpg';
-      final TaskSnapshot uploadTask = await storageRef.child(fileName).putFile(_image!);
+      final TaskSnapshot uploadTask =
+          await storageRef.child(fileName).putFile(_image!);
       final imageUrl = await uploadTask.ref.getDownloadURL();
 
-      // Оновлення посилання на зображення в базі даних Firestore
-      await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user!.uid)
+          .update({
         'profile_image': imageUrl,
       });
+
+      isDataChanged = true;
+    }
+
+    final String? newNickname = _nicknameController.text.trim();
+    if (newNickname != null && newNickname.isNotEmpty) {
+      final existingNicknameQuery = await FirebaseFirestore.instance
+          .collection('Users')
+          .where('nickname', isEqualTo: newNickname)
+          .get();
+
+      if (existingNicknameQuery.docs.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Цей нікнейм вже використовується, оберіть інший!'),
+          ),
+        );
+      } else {
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user!.uid)
+            .update({
+          'nickname': newNickname,
+        });
+
+        isDataChanged = true;
+        _nicknameController.clear();
       }
-      final String? newNickname = _nicknameController.text.trim();
-      if (newNickname != null && newNickname.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
-        'nickname': newNickname,
-      });
-      }
+    }
+    if (isDataChanged) {
       ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Зміни успішно збережено!'),
-      ),
+        const SnackBar(
+          content: Text('Дані успішно змінено!'),
+        ),
       );
     }
+  }
 }

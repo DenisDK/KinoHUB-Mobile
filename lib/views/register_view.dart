@@ -56,7 +56,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                       ),
                     ),
                     onPressed: _pickImage,
-                    child: const Text('Виберіть фото профілю'),
+                    child: const Text('Оберіть фото профілю'),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -154,7 +154,9 @@ class _RegistrationViewState extends State<RegistrationView> {
       return;
     }
 
-    String imageUrl = _image != null ? await _uploadImage() : '';
+    String imageUrl = _image != null
+        ? await _uploadImage()
+        : 'https://i.pinimg.com/564x/cc/5c/08/cc5c088add6d06315242444d78a8498d.jpg';
 
     final querySnapshot = await FirebaseFirestore.instance
         .collection('Users')
