@@ -7,13 +7,20 @@ import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/views/abandoned_list_view.dart';
 import 'package:kinohub/views/planned_list_view.dart';
-
 import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/settings_view.dart';
 import 'package:kinohub/views/viewed_list_view.dart';
 
-class UserProfile extends StatelessWidget {
-  const UserProfile({Key? key});
+class UserProfile extends StatefulWidget {
+  const UserProfile({Key? key}) : super(key: key);
+
+  @override
+  _UserProfileState createState() => _UserProfileState();
+}
+
+class _UserProfileState extends State<UserProfile> {
+  List<DocumentSnapshot> filteredDocuments = [];
+  var userData;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +39,7 @@ class UserProfile extends StatelessWidget {
             ),
           );
         } else {
-          var userData = snapshot.data!.data() as Map<String, dynamic>;
+          userData = snapshot.data!.data() as Map<String, dynamic>;
           return Scaffold(
             body: SafeArea(
               child: Center(
@@ -76,7 +83,7 @@ class UserProfile extends StatelessWidget {
                             const SizedBox(height: 15),
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                   context,
                                   CustomPageRoute(
                                     builder: (context) => const SettingsView(),
@@ -108,8 +115,8 @@ class UserProfile extends StatelessWidget {
                           const SizedBox(height: 15),
                           const Text(
                             'Друзі',
-                            style: TextStyle(
-                                color: Color(0xFFDEDEDE), fontSize: 20),
+                            style:
+                                TextStyle(color: Color(0xFFDEDEDE), fontSize: 20),
                           ),
                           const SizedBox(height: 15),
                           DecoratedBox(
@@ -158,7 +165,9 @@ class UserProfile extends StatelessWidget {
                               backgroundColor: const Color(0xFF242729),
                               foregroundColor: const Color(0xFFDEDEDE),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              _showSearchFriendsDialog(context);
+                            },
                             child: const Text('Додати нового друга'),
                           ),
                           const SizedBox(height: 7), // Доданий відступ
@@ -236,7 +245,7 @@ class UserProfile extends StatelessWidget {
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               CustomPageRoute(
                                 builder: (context) => const PremiumView(),
@@ -267,4 +276,142 @@ class UserProfile extends StatelessWidget {
       return nickname;
     }
   }
+
+  void _showSearchFriendsDialog(BuildContext context) {
+  User? currentUser = FirebaseAuth.instance.currentUser;
+
+  showDialog(
+    context: context,
+    barrierColor: Colors.black.withOpacity(0.3),
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            backgroundColor: Colors.grey[800],
+            title: const Text(
+              'Знайти друга',
+              style: TextStyle(color: Color(0xFFDEDEDE)),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('Users').snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData || snapshot.data == null) {
+                      return CircularProgressIndicator();
+                    }
+                    List<DocumentSnapshot> documents = snapshot.data!.docs;
+
+                    return Column(
+                      children: [
+                        TextField(
+                          cursorColor: const Color(0xFFFF5200),
+                          style: const TextStyle(color: Color(0xFFDEDEDE)),
+                          decoration: const InputDecoration(
+                            labelText: 'Ім\'я друга',
+                            labelStyle: TextStyle(color: Color(0xFFDEDEDE)),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFFF5200),), // Змініть колір тут на той, який вам потрібен
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              filteredDocuments.clear();
+                              if (value.isNotEmpty) {
+                                for (var doc in documents) {
+                                  String nickname = doc.get('nickname').toString().toLowerCase();
+                                  if (nickname.contains(value.toLowerCase()) && doc.id != currentUser!.uid) {
+                                    filteredDocuments.add(doc);
+                                  }
+                                }
+                              }
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 200,
+                          width: 300,
+                          child: ListView.builder(
+                            itemCount: filteredDocuments.length,
+                            itemBuilder: (BuildContext context, index) {
+                              return Dismissible(
+                                key: Key(filteredDocuments[index].id),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(filteredDocuments[index].get('profile_image')),
+                                  ),
+                                  title: Text(filteredDocuments[index].get('nickname'), style: const TextStyle(color: Color(0xFFDEDEDE)),),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.person_add), 
+                                    color: const Color(0xFFDEDEDE),
+                                    onPressed: () {
+                                      if(userData['isPremium']){
+                                        if(!userData['friends'].contains(filteredDocuments[index].id)){
+                                          FirebaseFirestore.instance.collection('Users').doc(currentUser!.uid).update({
+                                          'friends': FieldValue.arrayUnion([filteredDocuments[index].id])
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
+                                            ),
+                                          );
+                                        }
+                                        else{
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                      else{
+                                        if(userData['friends'].length >= 5){
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Користувач ${filteredDocuments[index].get('nickname')} ви не можете додати більше 5 друзів без преміум підписки :('),
+                                            ),
+                                          );
+                                        }
+                                        else{
+                                          if(!userData['friends'].contains(filteredDocuments[index].id)){
+                                            FirebaseFirestore.instance.collection('Users').doc(currentUser!.uid).update({
+                                            'friends': FieldValue.arrayUnion([filteredDocuments[index].id])
+                                            });
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
+                                              ),
+                                            );
+                                          }
+                                          else{
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      }
+                                    },
+                                  ),
+                                )
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  ).then((_) {
+    filteredDocuments.clear();
+  });
+}
 }
