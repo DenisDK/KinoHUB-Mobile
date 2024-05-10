@@ -38,7 +38,7 @@ class _MainBottomNavigationBarState extends State<MainBottomNavigationBar> {
             );
             break;
           case 1:
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               CustomPageRoute(
                 builder: (context) => MovieSearchScreen(),

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/components/custom_page_route.dart';
+import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/settings_view.dart';
 
 class UserProfile extends StatelessWidget {
@@ -216,7 +217,12 @@ class UserProfile extends StatelessWidget {
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
-                            // Прерхід на сторінку оформлення преміум-підписки
+                            Navigator.pushReplacement(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => const PremiumView(),
+                              ),
+                            );
                           },
                         )
                       ],

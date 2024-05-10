@@ -208,7 +208,7 @@ class _RegistrationViewState extends State<RegistrationView> {
     });
 
     batch.set(userRef.collection('Friends').doc(), {
-      'friend_nickname': '',
+      'friend_id': '',
     });
 
     await batch.commit();
