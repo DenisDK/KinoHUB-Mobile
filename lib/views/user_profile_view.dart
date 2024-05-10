@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/components/custom_page_route.dart';
+import 'package:kinohub/views/abandoned_list_view.dart';
+import 'package:kinohub/views/planned_list_view.dart';
 
 import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/settings_view.dart';
@@ -74,7 +76,7 @@ class UserProfile extends StatelessWidget {
                             const SizedBox(height: 15),
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.pushReplacement(
+                                Navigator.push(
                                   context,
                                   CustomPageRoute(
                                     builder: (context) => const SettingsView(),
@@ -194,7 +196,14 @@ class UserProfile extends StatelessWidget {
                               style: TextStyle(color: Color(0xFFDEDEDE))),
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => const PlannedMovies(),
+                              ),
+                            );
+                          },
                         ),
                         ListTile(
                           leading: const Icon(Icons.delete,
@@ -204,7 +213,12 @@ class UserProfile extends StatelessWidget {
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
-                            // Перехід на сторінку покинутих фільмів
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => const AbandonedMovies(),
+                              ),
+                            );
                           },
                         ),
                         const SizedBox(height: 15),

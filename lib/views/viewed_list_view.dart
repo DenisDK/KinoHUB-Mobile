@@ -58,8 +58,8 @@ class _ViewedMoviesState extends State<ViewedMovies> {
               padding: const EdgeInsets.all(20.0),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: 30.0,
-                mainAxisSpacing: 30.0,
+                crossAxisSpacing: 35.0,
+                mainAxisSpacing: 35.0,
                 childAspectRatio: 0.7,
               ),
               itemCount: moviesList.length,

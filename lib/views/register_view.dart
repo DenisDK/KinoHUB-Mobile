@@ -207,16 +207,13 @@ class _RegistrationViewState extends State<RegistrationView> {
       });
     });
 
-    batch.set(userRef.collection('Friends').doc(), {
-      'friend_id': '',
-    });
-
-    await batch.commit();
-
-    await userRef.set({
+    batch.set(userRef, {
       'nickname': nickname,
       'profile_image': imageUrl,
       'isPremium': isPremium,
+      'friends': [],
     });
+
+    await batch.commit();
   }
 }
