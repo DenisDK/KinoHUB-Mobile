@@ -19,6 +19,7 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+  final TextEditingController _nicknameController = TextEditingController();
   List<DocumentSnapshot> filteredDocuments = [];
   var userData;
 
@@ -115,8 +116,8 @@ class _UserProfileState extends State<UserProfile> {
                           const SizedBox(height: 15),
                           const Text(
                             'Друзі',
-                            style:
-                                TextStyle(color: Color(0xFFDEDEDE), fontSize: 20),
+                            style: TextStyle(
+                                color: Color(0xFFDEDEDE), fontSize: 20),
                           ),
                           const SizedBox(height: 15),
                           DecoratedBox(
@@ -278,140 +279,196 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   void _showSearchFriendsDialog(BuildContext context) {
-  User? currentUser = FirebaseAuth.instance.currentUser;
+    User? currentUser = FirebaseAuth.instance.currentUser;
 
-  showDialog(
-    context: context,
-    barrierColor: Colors.black.withOpacity(0.3),
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            backgroundColor: Colors.grey[800],
-            title: const Text(
-              'Знайти друга',
-              style: TextStyle(color: Color(0xFFDEDEDE)),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                StreamBuilder(
-                  stream: FirebaseFirestore.instance.collection('Users').snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (!snapshot.hasData || snapshot.data == null) {
-                      return CircularProgressIndicator();
-                    }
-                    List<DocumentSnapshot> documents = snapshot.data!.docs;
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.3),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.grey[800],
+              title: const Text(
+                'Знайти друга',
+                style: TextStyle(color: Color(0xFFDEDEDE), fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('Users')
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (!snapshot.hasData || snapshot.data == null) {
+                        return CircularProgressIndicator();
+                      }
+                      List<DocumentSnapshot> documents = snapshot.data!.docs;
 
-                    return Column(
-                      children: [
-                        TextField(
-                          cursorColor: const Color(0xFFFF5200),
-                          style: const TextStyle(color: Color(0xFFDEDEDE)),
-                          decoration: const InputDecoration(
-                            labelText: 'Ім\'я друга',
-                            labelStyle: TextStyle(color: Color(0xFFDEDEDE)),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xFFFF5200),), // Змініть колір тут на той, який вам потрібен
+                      return Column(
+                        children: [
+                          TextField(
+                            controller: _nicknameController,
+                            cursorColor: const Color(0xFFFF5200),
+                            decoration: InputDecoration(
+                              labelText: 'Нікнейм друга',
+                              labelStyle: const TextStyle(
+                                color: Color(0xFFDEDEDE),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              filled: true,
+                              fillColor: Colors.grey[700],
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  _nicknameController.clear();
+                                },
+                                icon: const Icon(Icons.clear,
+                                    color: Color(0xFFDEDEDE)),
+                              ),
                             ),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              filteredDocuments.clear();
-                              if (value.isNotEmpty) {
-                                for (var doc in documents) {
-                                  String nickname = doc.get('nickname').toString().toLowerCase();
-                                  if (nickname.contains(value.toLowerCase()) && doc.id != currentUser!.uid) {
-                                    filteredDocuments.add(doc);
+                            onChanged: (value) {
+                              setState(() {
+                                filteredDocuments.clear();
+                                if (value.isNotEmpty) {
+                                  for (var doc in documents) {
+                                    String nickname = doc
+                                        .get('nickname')
+                                        .toString()
+                                        .toLowerCase();
+                                    if (nickname
+                                            .contains(value.toLowerCase()) &&
+                                        doc.id != currentUser!.uid) {
+                                      filteredDocuments.add(doc);
+                                    }
                                   }
                                 }
-                              }
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          height: 200,
-                          width: 300,
-                          child: ListView.builder(
-                            itemCount: filteredDocuments.length,
-                            itemBuilder: (BuildContext context, index) {
-                              return Dismissible(
-                                key: Key(filteredDocuments[index].id),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(filteredDocuments[index].get('profile_image')),
-                                  ),
-                                  title: Text(filteredDocuments[index].get('nickname'), style: const TextStyle(color: Color(0xFFDEDEDE)),),
-                                  trailing: IconButton(
-                                    icon: const Icon(Icons.person_add), 
-                                    color: const Color(0xFFDEDEDE),
-                                    onPressed: () {
-                                      if(userData['isPremium']){
-                                        if(!userData['friends'].contains(filteredDocuments[index].id)){
-                                          FirebaseFirestore.instance.collection('Users').doc(currentUser!.uid).update({
-                                          'friends': FieldValue.arrayUnion([filteredDocuments[index].id])
-                                          });
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
-                                            ),
-                                          );
-                                        }
-                                        else{
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
-                                            ),
-                                          );
-                                        }
-                                      }
-                                      else{
-                                        if(userData['friends'].length >= 5){
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Користувач ${filteredDocuments[index].get('nickname')} ви не можете додати більше 5 друзів без преміум підписки :('),
-                                            ),
-                                          );
-                                        }
-                                        else{
-                                          if(!userData['friends'].contains(filteredDocuments[index].id)){
-                                            FirebaseFirestore.instance.collection('Users').doc(currentUser!.uid).update({
-                                            'friends': FieldValue.arrayUnion([filteredDocuments[index].id])
-                                            });
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text('Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
-                                              ),
-                                            );
-                                          }
-                                          else{
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(
-                                                content: Text('Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      }
-                                    },
-                                  ),
-                                )
-                              );
+                              });
                             },
+                            style: const TextStyle(color: Color(0xFFDEDEDE)),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    },
-  ).then((_) {
-    filteredDocuments.clear();
-  });
-}
+                          SizedBox(
+                            height: 200,
+                            width: 300,
+                            child: ListView.builder(
+                              itemCount: filteredDocuments.length,
+                              itemBuilder: (BuildContext context, index) {
+                                return Dismissible(
+                                    key: Key(filteredDocuments[index].id),
+                                    child: ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage: NetworkImage(
+                                            filteredDocuments[index]
+                                                .get('profile_image')),
+                                      ),
+                                      title: Text(
+                                        filteredDocuments[index]
+                                            .get('nickname'),
+                                        style: const TextStyle(
+                                            color: Color(0xFFDEDEDE)),
+                                      ),
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.person_add),
+                                        color: const Color(0xFFDEDEDE),
+                                        onPressed: () {
+                                          if (userData['isPremium']) {
+                                            if (!userData['friends'].contains(
+                                                filteredDocuments[index].id)) {
+                                              FirebaseFirestore.instance
+                                                  .collection('Users')
+                                                  .doc(currentUser!.uid)
+                                                  .update({
+                                                'friends':
+                                                    FieldValue.arrayUnion([
+                                                  filteredDocuments[index].id
+                                                ])
+                                              });
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
+                                                ),
+                                              );
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
+                                                ),
+                                              );
+                                            }
+                                          } else {
+                                            if (userData['friends'].length >=
+                                                5) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Користувач ${filteredDocuments[index].get('nickname')} ви не можете додати більше 5 друзів без преміум підписки :('),
+                                                ),
+                                              );
+                                            } else {
+                                              if (!userData['friends'].contains(
+                                                  filteredDocuments[index]
+                                                      .id)) {
+                                                FirebaseFirestore.instance
+                                                    .collection('Users')
+                                                    .doc(currentUser!.uid)
+                                                    .update({
+                                                  'friends':
+                                                      FieldValue.arrayUnion([
+                                                    filteredDocuments[index].id
+                                                  ])
+                                                });
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
+                                                  ),
+                                                );
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
+                                                  ),
+                                                );
+                                              }
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ));
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((_) {
+      filteredDocuments.clear();
+      _nicknameController.clear();
+    });
+  }
 }
