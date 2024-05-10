@@ -2,38 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-// Методи працюють але потірбно багато чого доробити
-
-// Future<void> removeFromAllLists(
-//     BuildContext context, int filmId, String exceptList) async {
-//   try {
-//     final user = FirebaseAuth.instance.currentUser;
-//     final userRef =
-//         FirebaseFirestore.instance.collection('Users').doc(user?.uid);
-
-//     final allLists = ['WatchedMovies', 'PlannedMovies', 'AbandonedMovies'];
-
-//     await Future.forEach(allLists, (listName) async {
-//       if (listName != exceptList) {
-//         final snapshot = await userRef
-//             .collection(listName)
-//             .where('filmID', isEqualTo: filmId)
-//             .get();
-//         snapshot.docs.forEach((doc) {
-//           doc.reference.delete();
-//         });
-//       }
-//     });
-//   } catch (e) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(
-//         content:
-//             Text('Помилка під час видалення фільму зі списків користувача'),
-//       ),
-//     );
-//   }
-// }
-
 Future<bool> addToUserList(
     BuildContext context, String listName, int filmId) async {
   try {

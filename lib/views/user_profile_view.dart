@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/components/custom_page_route.dart';
+
 import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/settings_view.dart';
+import 'package:kinohub/views/viewed_list_view.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({Key? key});
@@ -177,7 +179,12 @@ class UserProfile extends StatelessWidget {
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
-                            // Перехід на сторінку переглянутих фільмів
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => const ViewedMovies(),
+                              ),
+                            );
                           },
                         ),
                         ListTile(
@@ -187,9 +194,7 @@ class UserProfile extends StatelessWidget {
                               style: TextStyle(color: Color(0xFFDEDEDE))),
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
-                          onTap: () {
-                            // Перехід на сторінку запланованих фільмів
-                          },
+                          onTap: () {},
                         ),
                         ListTile(
                           leading: const Icon(Icons.delete,
@@ -217,7 +222,7 @@ class UserProfile extends StatelessWidget {
                           trailing: const Icon(Icons.arrow_forward_ios,
                               color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
-                            Navigator.pushReplacement(
+                            Navigator.push(
                               context,
                               CustomPageRoute(
                                 builder: (context) => const PremiumView(),
