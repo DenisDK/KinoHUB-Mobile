@@ -130,30 +130,44 @@ class _UserProfileState extends State<UserProfile> {
                               width: 370,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: 8,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    width: 120,
-                                    child: const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTq6ZeoZMtqemS0k5w0ylnONNLWu1426xbXpeUJTbEI4w&s'),
-                                          radius: 30,
+                                itemCount: userData['friends'].length,
+                                itemBuilder: (BuildContext context, index) {
+                                  String friendId = userData['friends'][index];
+                                  return FutureBuilder<DocumentSnapshot>(
+                                    future: FirebaseFirestore.instance.collection('Users').doc(friendId).get(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return CircularProgressIndicator();
+                                      }
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+                                      if (!snapshot.hasData || snapshot.data == null) {
+                                        return const SizedBox();
+                                      }
+                                      var friendData = snapshot.data!.data() as Map<String, dynamic>;
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        width: 120,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: NetworkImage(friendData['profile_image'] ?? ''),
+                                              radius: 30,
+                                            ),
+                                            const Padding(
+                                                padding: EdgeInsets.only(top: 5)),
+                                            Text(friendData['nickname'] ?? '',
+                                              style: const TextStyle(
+                                                  color: Color(0xFFDEDEDE),
+                                                  fontSize: 13),
+                                            )
+                                          ],
                                         ),
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 5)),
-                                        Text(
-                                          'AlexStavok',
-                                          style: TextStyle(
-                                              color: Color(0xFFDEDEDE),
-                                              fontSize: 13),
-                                        )
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   );
                                 },
                               ),
@@ -365,7 +379,13 @@ class _UserProfileState extends State<UserProfile> {
                               itemBuilder: (BuildContext context, index) {
                                 return Dismissible(
                                     key: Key(filteredDocuments[index].id),
-                                    child: ListTile(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                      child: ListTile(
+                                      tileColor: Colors.grey[700],
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
                                       leading: CircleAvatar(
                                         backgroundImage: NetworkImage(
                                             filteredDocuments[index]
@@ -452,7 +472,9 @@ class _UserProfileState extends State<UserProfile> {
                                           }
                                         },
                                       ),
-                                    ));
+                                    )
+                                  )
+                                );
                               },
                             ),
                           ),
