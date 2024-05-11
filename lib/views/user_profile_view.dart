@@ -153,13 +153,33 @@ class _UserProfileState extends State<UserProfile> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            CircleAvatar(
-                                              backgroundImage: NetworkImage(friendData['profile_image'] ?? ''),
-                                              radius: 30,
+                                            Stack(
+                                              alignment: Alignment.topRight,
+                                              children: [
+                                                CircleAvatar(
+                                                  backgroundImage: NetworkImage(friendData['profile_image'] ?? ''),
+                                                  radius: 30,
+                                                ),
+                                                Positioned(
+                                                  top: -15,
+                                                  right: -15,
+                                                  child: IconButton(
+                                                    icon: Icon(Icons.delete),
+                                                    color: Colors.red,
+                                                    onPressed: () {
+                                                      String friendId = userData['friends'][index];
+                                                      FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+                                                        'friends': FieldValue.arrayRemove([friendId])
+                                                      }
+                                                      );
+                                                    },
+                                                  ),
+                                                )
+                                              ],
                                             ),
                                             const Padding(
                                                 padding: EdgeInsets.only(top: 5)),
-                                            Text(friendData['nickname'] ?? '',
+                                            Text(_truncateNickname(friendData['nickname'] ?? '', 12),
                                               style: const TextStyle(
                                                   color: Color(0xFFDEDEDE),
                                                   fontSize: 13),
