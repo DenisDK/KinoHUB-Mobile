@@ -167,10 +167,33 @@ class _UserProfileState extends State<UserProfile> {
                                                     icon: Icon(Icons.delete),
                                                     color: Colors.red,
                                                     onPressed: () {
-                                                      String friendId = userData['friends'][index];
-                                                      FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
-                                                        'friends': FieldValue.arrayRemove([friendId])
-                                                      }
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return AlertDialog(
+                                                            title: const Text("Видалити друга?"),
+                                                            content: const Text("Ви впевнені, що хочете видалити цього друга?"),
+                                                            actions: [
+                                                              TextButton(
+                                                                child: const Text("Ні", style: TextStyle(color: Color(0xFFFF5200),),),
+                                                                onPressed: () {
+                                                                  Navigator.of(context).pop();
+                                                                },
+                                                              ),
+                                                              TextButton(
+                                                                child: const Text("Так", style: TextStyle(color: Color(0xFFFF5200),),),
+                                                                onPressed: () {
+                                                                  String friendId = userData['friends'][index];
+                                                                  FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
+                                                                    'friends': FieldValue.arrayRemove([friendId])
+                                                                  }
+                                                                  );
+                                                                  Navigator.of(context).pop();
+                                                                },
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
                                                       );
                                                     },
                                                   ),
@@ -179,7 +202,7 @@ class _UserProfileState extends State<UserProfile> {
                                             ),
                                             const Padding(
                                                 padding: EdgeInsets.only(top: 5)),
-                                            Text(_truncateNickname(friendData['nickname'] ?? '', 12),
+                                            Text(_truncateNickname(friendData['nickname'] ?? '', 9),
                                               style: const TextStyle(
                                                   color: Color(0xFFDEDEDE),
                                                   fontSize: 13),
