@@ -5,3 +5,4 @@ const userProfileRoute = '/userProfile';
 const userRegistrationRoute = '/userRegistration';
 const settingsRoute = '/setting';
 const premiumRoute = '/premiumView';
+const friendProfileRoute = '/friendProfile';

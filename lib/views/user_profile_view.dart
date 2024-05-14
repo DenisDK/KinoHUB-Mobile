@@ -134,18 +134,24 @@ class _UserProfileState extends State<UserProfile> {
                                 itemBuilder: (BuildContext context, index) {
                                   String friendId = userData['friends'][index];
                                   return FutureBuilder<DocumentSnapshot>(
-                                    future: FirebaseFirestore.instance.collection('Users').doc(friendId).get(),
+                                    future: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .doc(friendId)
+                                        .get(),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
                                         return CircularProgressIndicator();
                                       }
                                       if (snapshot.hasError) {
                                         return Text('Error: ${snapshot.error}');
                                       }
-                                      if (!snapshot.hasData || snapshot.data == null) {
+                                      if (!snapshot.hasData ||
+                                          snapshot.data == null) {
                                         return const SizedBox();
                                       }
-                                      var friendData = snapshot.data!.data() as Map<String, dynamic>;
+                                      var friendData = snapshot.data!.data()
+                                          as Map<String, dynamic>;
                                       return Container(
                                         alignment: Alignment.center,
                                         width: 120,
@@ -157,7 +163,10 @@ class _UserProfileState extends State<UserProfile> {
                                               alignment: Alignment.topRight,
                                               children: [
                                                 CircleAvatar(
-                                                  backgroundImage: NetworkImage(friendData['profile_image'] ?? ''),
+                                                  backgroundImage: NetworkImage(
+                                                      friendData[
+                                                              'profile_image'] ??
+                                                          ''),
                                                   radius: 30,
                                                 ),
                                                 Positioned(
@@ -169,26 +178,63 @@ class _UserProfileState extends State<UserProfile> {
                                                     onPressed: () {
                                                       showDialog(
                                                         context: context,
-                                                        builder: (BuildContext context) {
+                                                        builder: (BuildContext
+                                                            context) {
                                                           return AlertDialog(
-                                                            title: const Text("Видалити друга?"),
-                                                            content: const Text("Ви впевнені, що хочете видалити цього друга?"),
+                                                            title: const Text(
+                                                                "Видалити друга?"),
+                                                            content: const Text(
+                                                                "Ви впевнені, що хочете видалити цього друга?"),
                                                             actions: [
                                                               TextButton(
-                                                                child: const Text("Ні", style: TextStyle(color: Color(0xFFFF5200),),),
+                                                                child:
+                                                                    const Text(
+                                                                  "Ні",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFFFF5200),
+                                                                  ),
+                                                                ),
                                                                 onPressed: () {
-                                                                  Navigator.of(context).pop();
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
                                                                 },
                                                               ),
                                                               TextButton(
-                                                                child: const Text("Так", style: TextStyle(color: Color(0xFFFF5200),),),
+                                                                child:
+                                                                    const Text(
+                                                                  "Так",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Color(
+                                                                        0xFFFF5200),
+                                                                  ),
+                                                                ),
                                                                 onPressed: () {
-                                                                  String friendId = userData['friends'][index];
-                                                                  FirebaseFirestore.instance.collection('Users').doc(user!.uid).update({
-                                                                    'friends': FieldValue.arrayRemove([friendId])
-                                                                  }
-                                                                  );
-                                                                  Navigator.of(context).pop();
+                                                                  String
+                                                                      friendId =
+                                                                      userData[
+                                                                              'friends']
+                                                                          [
+                                                                          index];
+                                                                  FirebaseFirestore
+                                                                      .instance
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(user!
+                                                                          .uid)
+                                                                      .update({
+                                                                    'friends':
+                                                                        FieldValue
+                                                                            .arrayRemove([
+                                                                      friendId
+                                                                    ])
+                                                                  });
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
                                                                 },
                                                               ),
                                                             ],
@@ -201,8 +247,12 @@ class _UserProfileState extends State<UserProfile> {
                                               ],
                                             ),
                                             const Padding(
-                                                padding: EdgeInsets.only(top: 5)),
-                                            Text(_truncateNickname(friendData['nickname'] ?? '', 9),
+                                                padding:
+                                                    EdgeInsets.only(top: 5)),
+                                            Text(
+                                              _truncateNickname(
+                                                  friendData['nickname'] ?? '',
+                                                  9),
                                               style: const TextStyle(
                                                   color: Color(0xFFDEDEDE),
                                                   fontSize: 13),
@@ -423,101 +473,108 @@ class _UserProfileState extends State<UserProfile> {
                                 return Dismissible(
                                     key: Key(filteredDocuments[index].id),
                                     child: Padding(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: ListTile(
-                                      tileColor: Colors.grey[700],
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      leading: CircleAvatar(
-                                        backgroundImage: NetworkImage(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: ListTile(
+                                          tileColor: Colors.grey[700],
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          leading: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                filteredDocuments[index]
+                                                    .get('profile_image')),
+                                          ),
+                                          title: Text(
                                             filteredDocuments[index]
-                                                .get('profile_image')),
-                                      ),
-                                      title: Text(
-                                        filteredDocuments[index]
-                                            .get('nickname'),
-                                        style: const TextStyle(
-                                            color: Color(0xFFDEDEDE)),
-                                      ),
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.person_add),
-                                        color: const Color(0xFFDEDEDE),
-                                        onPressed: () {
-                                          if (userData['isPremium']) {
-                                            if (!userData['friends'].contains(
-                                                filteredDocuments[index].id)) {
-                                              FirebaseFirestore.instance
-                                                  .collection('Users')
-                                                  .doc(currentUser!.uid)
-                                                  .update({
-                                                'friends':
-                                                    FieldValue.arrayUnion([
-                                                  filteredDocuments[index].id
-                                                ])
-                                              });
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
-                                                ),
-                                              );
-                                            }
-                                          } else {
-                                            if (userData['friends'].length >=
-                                                5) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Користувач ${filteredDocuments[index].get('nickname')} ви не можете додати більше 5 друзів без преміум підписки :('),
-                                                ),
-                                              );
-                                            } else {
-                                              if (!userData['friends'].contains(
-                                                  filteredDocuments[index]
-                                                      .id)) {
-                                                FirebaseFirestore.instance
-                                                    .collection('Users')
-                                                    .doc(currentUser!.uid)
-                                                    .update({
-                                                  'friends':
-                                                      FieldValue.arrayUnion([
-                                                    filteredDocuments[index].id
-                                                  ])
-                                                });
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
-                                                  ),
-                                                );
+                                                .get('nickname'),
+                                            style: const TextStyle(
+                                                color: Color(0xFFDEDEDE)),
+                                          ),
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.person_add),
+                                            color: const Color(0xFFDEDEDE),
+                                            onPressed: () {
+                                              if (userData['isPremium']) {
+                                                if (!userData['friends']
+                                                    .contains(
+                                                        filteredDocuments[index]
+                                                            .id)) {
+                                                  FirebaseFirestore.instance
+                                                      .collection('Users')
+                                                      .doc(currentUser!.uid)
+                                                      .update({
+                                                    'friends':
+                                                        FieldValue.arrayUnion([
+                                                      filteredDocuments[index]
+                                                          .id
+                                                    ])
+                                                  });
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
+                                                    ),
+                                                  );
+                                                }
                                               } else {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
-                                                  ),
-                                                );
+                                                if (userData['friends']
+                                                        .length >=
+                                                    5) {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Користувач ${filteredDocuments[index].get('nickname')} ви не можете додати більше 5 друзів без преміум підписки :('),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  if (!userData['friends']
+                                                      .contains(
+                                                          filteredDocuments[
+                                                                  index]
+                                                              .id)) {
+                                                    FirebaseFirestore.instance
+                                                        .collection('Users')
+                                                        .doc(currentUser!.uid)
+                                                        .update({
+                                                      'friends': FieldValue
+                                                          .arrayUnion([
+                                                        filteredDocuments[index]
+                                                            .id
+                                                      ])
+                                                    });
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                            'Користувач ${filteredDocuments[index].get('nickname')} додано до списку друзів'),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                            'Користувач ${filteredDocuments[index].get('nickname')} вже є в списку друзів'),
+                                                      ),
+                                                    );
+                                                  }
+                                                }
                                               }
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    )
-                                  )
-                                );
+                                            },
+                                          ),
+                                        )));
                               },
                             ),
                           ),

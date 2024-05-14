@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/firebase_options.dart';
+import 'package:kinohub/views/friend_profile_view.dart';
 import 'package:kinohub/views/main_menu.dart';
 import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/register_view.dart';
@@ -38,6 +39,7 @@ void main() async {
         userRegistrationRoute: (context) => const RegistrationView(),
         settingsRoute: (context) => const SettingsView(),
         premiumRoute: (context) => const PremiumView(),
+        friendProfileRoute: (context) => const FriendProfileView(),
       },
     ),
   );
