@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/views/abandoned_list_view.dart';
+import 'package:kinohub/views/friend_profile_view.dart';
 import 'package:kinohub/views/planned_list_view.dart';
 import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/settings_view.dart';
@@ -162,12 +163,25 @@ class _UserProfileState extends State<UserProfile> {
                                             Stack(
                                               alignment: Alignment.topRight,
                                               children: [
-                                                CircleAvatar(
-                                                  backgroundImage: NetworkImage(
-                                                      friendData[
-                                                              'profile_image'] ??
-                                                          ''),
-                                                  radius: 30,
+                                                ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+                                                    minimumSize: MaterialStateProperty.all<Size>(Size.zero),
+                                                  ),
+                                                  onPressed: (){
+                                                    Navigator.push(
+                                                      context,
+                                                      CustomPageRoute(
+                                                        builder: (context) => FriendProfileView(friendId: friendId),
+                                                      ),
+                                                    );
+                                                  }, 
+                                                  child: CircleAvatar(
+                                                    backgroundImage: NetworkImage(
+                                                      friendData['profile_image'] ?? '',
+                                                    ),
+                                                    radius: 30,
+                                                  ),
                                                 ),
                                                 Positioned(
                                                   top: -15,
@@ -214,27 +228,18 @@ class _UserProfileState extends State<UserProfile> {
                                                                 ),
                                                                 onPressed: () {
                                                                   String
-                                                                      friendId =
-                                                                      userData[
-                                                                              'friends']
-                                                                          [
-                                                                          index];
+                                                                    friendId =  userData['friends'][index];
                                                                   FirebaseFirestore
                                                                       .instance
-                                                                      .collection(
-                                                                          'Users')
-                                                                      .doc(user!
-                                                                          .uid)
+                                                                      .collection('Users')
+                                                                      .doc(user!.uid)
                                                                       .update({
                                                                     'friends':
-                                                                        FieldValue
-                                                                            .arrayRemove([
-                                                                      friendId
-                                                                    ])
+                                                                      FieldValue
+                                                                      .arrayRemove([friendId])
                                                                   });
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
+                                                                  Navigator.of(context)
+                                                                    .pop();
                                                                 },
                                                               ),
                                                             ],

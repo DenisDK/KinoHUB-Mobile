@@ -39,7 +39,7 @@ void main() async {
         userRegistrationRoute: (context) => const RegistrationView(),
         settingsRoute: (context) => const SettingsView(),
         premiumRoute: (context) => const PremiumView(),
-        friendProfileRoute: (context) => const FriendProfileView(),
+        friendProfileRoute: (context) => const FriendProfileView(friendId: '',),
       },
     ),
   );
