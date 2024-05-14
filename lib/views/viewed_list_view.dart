@@ -5,7 +5,8 @@ import 'package:kinohub/views/movie_detail_view.dart';
 import 'package:kinohub/views/user_profile_view.dart';
 
 class ViewedMovies extends StatefulWidget {
-  const ViewedMovies({Key? key}) : super(key: key);
+  final String userId;
+  const ViewedMovies({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<ViewedMovies> createState() => _ViewedMoviesState();
@@ -17,7 +18,7 @@ class _ViewedMoviesState extends State<ViewedMovies> {
   @override
   void initState() {
     super.initState();
-    movies = watchedMovies();
+    movies = watchedMovies(widget.userId);
   }
 
   @override
@@ -36,12 +37,7 @@ class _ViewedMoviesState extends State<ViewedMovies> {
           icon: const Icon(Icons.arrow_back),
           color: const Color(0xFFD3D3D3),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              CustomPageRoute(
-                builder: (context) => const UserProfile(),
-              ),
-            );
+            Navigator.pop(context);
           },
         ),
       ),

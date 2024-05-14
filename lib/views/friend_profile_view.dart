@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kinohub/components/custom_page_route.dart';
+import 'package:kinohub/views/abandoned_list_view.dart';
+import 'package:kinohub/views/planned_list_view.dart';
 import 'package:kinohub/views/user_profile_view.dart';
+import 'package:kinohub/views/viewed_list_view.dart';
+
 
 class FriendProfileView extends StatelessWidget {
   final String friendId;
@@ -55,7 +58,7 @@ class FriendProfileView extends StatelessWidget {
                       children: [
                         CircleAvatar(
                           backgroundImage: NetworkImage(userData['profile_image'] ?? ''),
-                          radius: 75,
+                          radius: 65,
                         ),
                         const SizedBox(width: 20),
                         Column(
@@ -95,7 +98,6 @@ class FriendProfileView extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 15),
                           const Text(
                             'Друзі',
                             style: TextStyle(
@@ -187,32 +189,41 @@ class FriendProfileView extends StatelessWidget {
                           leading: const Icon(Icons.remove_red_eye, color: Color(0xFFDEDEDE)),
                           title: const Text('Переглянуті', style: TextStyle(color: Color(0xFFDEDEDE))),
                           trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => ViewedMovies(userId: friendId),
+                              ),
+                            );
+                          },
                         ),
                         ListTile(
                           leading: const Icon(Icons.playlist_add, color: Color(0xFFDEDEDE)),
                           title: const Text('Заплановані', style: TextStyle(color: Color(0xFFDEDEDE))),
                           trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => PlannedMovies(userId: friendId),
+                              ),
+                            );
+                          },
                         ),
                         ListTile(
                           leading: const Icon(Icons.delete, color: Color(0xFFDEDEDE)),
                           title: const Text('Покинуті', style: TextStyle(color: Color(0xFFDEDEDE))),
                           trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                builder: (context) => AbandonedMovies(userId: friendId),
+                              ),
+                            );
+                          },
                         ),
-                        const SizedBox(height: 15),
-                        const Text(
-                          'Преміум',
-                          style: TextStyle(color: Color(0xFFDEDEDE), fontSize: 20),
-                        ),
-                        const Padding(padding: EdgeInsets.only(top: 10)),
-                        ListTile(
-                          leading: const Icon(Icons.star, color: Color(0xFFDEDEDE)),
-                          title: const Text('Оформити преміум-підписку', style: TextStyle(color: Color(0xFFDEDEDE))),
-                          trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
-                          onTap: () {},
-                        )
                       ],
                     ),
                   ],

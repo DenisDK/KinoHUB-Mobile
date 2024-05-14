@@ -114,7 +114,6 @@ class _UserProfileState extends State<UserProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 15),
                           const Text(
                             'Друзі',
                             style: TextStyle(
@@ -306,7 +305,7 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => const ViewedMovies(),
+                                builder: (context) => ViewedMovies(userId: user.uid),
                               ),
                             );
                           },
@@ -322,7 +321,7 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => const PlannedMovies(),
+                                builder: (context) => PlannedMovies(userId: user.uid),
                               ),
                             );
                           },
@@ -338,7 +337,7 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => const AbandonedMovies(),
+                                builder: (context) => AbandonedMovies(userId: user.uid),
                               ),
                             );
                           },
@@ -361,7 +360,7 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.pushReplacement(
                               context,
                               CustomPageRoute(
-                                builder: (context) => const PremiumView(),
+                                builder: (context) => PremiumView(),
                               ),
                             );
                           },

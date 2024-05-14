@@ -4,29 +4,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<int>> getWatchedFromIds(String userColection) async {
-  final String collection = userColection;
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    final userRef =
-        FirebaseFirestore.instance.collection('Users').doc(user.uid);
+Future<List<int>> getWatchedFromIds(String userCollection, String userId) async {
+  final String collection = userCollection;
+  final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
 
-    try {
-      final snapshot = await userRef.collection(collection).get();
-      final List<int> watchedMovieIds = [];
+  try {
+    final snapshot = await userRef.collection(collection).get();
+    final List<int> watchedMovieIds = [];
 
-      snapshot.docs.forEach((doc) {
-        watchedMovieIds.add(doc['filmID'] as int);
-      });
+    snapshot.docs.forEach((doc) {
+      watchedMovieIds.add(doc['filmID'] as int);
+    });
 
-      return watchedMovieIds;
-    } catch (e) {
-      return [];
-    }
-  } else {
+    return watchedMovieIds;
+  } catch (e) {
     return [];
   }
 }
+
 
 Future<List<Map<String, dynamic>>> fetchMoviesByIds(List<int> movieIds) async {
   List<Future<Map<String, dynamic>>> fetchFutures = [];
@@ -75,20 +70,21 @@ Future<Map<String, dynamic>> fetchMovie(int movieId, String apiKey) async {
   }
 }
 
-Future<List<Map<String, dynamic>>> watchedMovies() async {
-  List<int> watchedMovieIds = await getWatchedFromIds('WatchedMovies');
+Future<List<Map<String, dynamic>>> plannedMovies(String userId) async {
+  List<int> plannedMovieIds = await getWatchedFromIds('PlannedMovies', userId);
+
+  return fetchMoviesByIds(plannedMovieIds);
+}
+
+Future<List<Map<String, dynamic>>> watchedMovies(String userId) async {
+  List<int> watchedMovieIds = await getWatchedFromIds('WatchedMovies', userId);
 
   return fetchMoviesByIds(watchedMovieIds);
 }
 
-Future<List<Map<String, dynamic>>> plannedMovies() async {
-  List<int> watchedMovieIds = await getWatchedFromIds('PlannedMovies');
+Future<List<Map<String, dynamic>>> abandonedMovies(String userId) async {
+  List<int> abandonedMovieIds = await getWatchedFromIds('AbandonedMovies', userId);
 
-  return fetchMoviesByIds(watchedMovieIds);
+  return fetchMoviesByIds(abandonedMovieIds);
 }
 
-Future<List<Map<String, dynamic>>> abandonedMovies() async {
-  List<int> watchedMovieIds = await getWatchedFromIds('AbandonedMovies');
-
-  return fetchMoviesByIds(watchedMovieIds);
-}
