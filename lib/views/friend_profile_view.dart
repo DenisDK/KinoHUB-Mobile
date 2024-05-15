@@ -7,7 +7,6 @@ import 'package:kinohub/views/planned_list_view.dart';
 import 'package:kinohub/views/user_profile_view.dart';
 import 'package:kinohub/views/viewed_list_view.dart';
 
-
 class FriendProfileView extends StatelessWidget {
   final String friendId;
   const FriendProfileView({Key? key, required this.friendId}) : super(key: key);
@@ -15,7 +14,10 @@ class FriendProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance.collection('Users').doc(friendId).snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('Users')
+          .doc(friendId)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(
@@ -57,23 +59,28 @@ class FriendProfileView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircleAvatar(
-                          backgroundImage: NetworkImage(userData['profile_image'] ?? ''),
+                          backgroundImage:
+                              NetworkImage(userData['profile_image'] ?? ''),
                           radius: 65,
                         ),
-                        const SizedBox(width: 20),
+                        const SizedBox(width: 40),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Clipboard.setData(ClipboardData(text: userData['nickname']));
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text('Нікнейм скопійовано: ${userData['nickname']}'),
+                                Clipboard.setData(
+                                    ClipboardData(text: userData['nickname']));
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(
+                                      'Нікнейм скопійовано: ${userData['nickname']}'),
                                 ));
                               },
                               child: Text(
-                                _truncateNickname(userData['nickname'] ?? '', 12),
+                                _truncateNickname(
+                                    userData['nickname'] ?? '', 12),
                                 style: const TextStyle(
                                   color: Color(0xFFDEDEDE),
                                   fontSize: 20,
@@ -87,7 +94,7 @@ class FriendProfileView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Padding(padding: EdgeInsets.only(top: 20)),
+                    const Padding(padding: EdgeInsets.only(top: 30)),
                     Container(
                       padding: const EdgeInsets.all(10),
                       margin: const EdgeInsets.symmetric(horizontal: 15),
@@ -118,48 +125,65 @@ class FriendProfileView extends StatelessWidget {
                                 itemBuilder: (BuildContext context, index) {
                                   String friendId = userData['friends'][index];
                                   return FutureBuilder<DocumentSnapshot>(
-                                    future: FirebaseFirestore.instance.collection('Users').doc(friendId).get(),
+                                    future: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .doc(friendId)
+                                        .get(),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
                                         return CircularProgressIndicator();
                                       }
                                       if (snapshot.hasError) {
                                         return Text('Error: ${snapshot.error}');
                                       }
-                                      if (!snapshot.hasData || snapshot.data == null) {
+                                      if (!snapshot.hasData ||
+                                          snapshot.data == null) {
                                         return const SizedBox();
                                       }
-                                      var friendData = snapshot.data!.data() as Map<String, dynamic>;
+                                      var friendData = snapshot.data!.data()
+                                          as Map<String, dynamic>;
                                       return Container(
                                         alignment: Alignment.center,
                                         width: 120,
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
-                                                    minimumSize: MaterialStateProperty.all<Size>(Size.zero),
+                                              style: ButtonStyle(
+                                                padding: MaterialStateProperty
+                                                    .all<EdgeInsetsGeometry>(
+                                                        EdgeInsets.zero),
+                                                minimumSize:
+                                                    MaterialStateProperty.all<
+                                                        Size>(Size.zero),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  CustomPageRoute(
+                                                    builder: (context) =>
+                                                        FriendProfileView(
+                                                            friendId: friendId),
                                                   ),
-                                                  onPressed: (){
-                                                    Navigator.push(
-                                                      context,
-                                                      CustomPageRoute(
-                                                        builder: (context) => FriendProfileView(friendId: friendId),
-                                                      ),
-                                                    );
-                                                  }, 
-                                                  child: CircleAvatar(
-                                                    backgroundImage: NetworkImage(
-                                                      friendData['profile_image'] ?? '',
-                                                    ),
-                                                    radius: 30,
-                                                  ),
+                                                );
+                                              },
+                                              child: CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                  friendData['profile_image'] ??
+                                                      '',
                                                 ),
+                                                radius: 30,
+                                              ),
+                                            ),
                                             const Padding(
-                                                padding: EdgeInsets.only(top: 5)),
+                                                padding:
+                                                    EdgeInsets.only(top: 5)),
                                             Text(
-                                              _truncateNickname(friendData['nickname'] ?? '', 9),
+                                              _truncateNickname(
+                                                  friendData['nickname'] ?? '',
+                                                  9),
                                               style: const TextStyle(
                                                   color: Color(0xFFDEDEDE),
                                                   fontSize: 13),
@@ -186,43 +210,75 @@ class FriendProfileView extends StatelessWidget {
                     Column(
                       children: [
                         ListTile(
-                          leading: const Icon(Icons.remove_red_eye, color: Color(0xFFDEDEDE)),
-                          title: const Text('Переглянуті', style: TextStyle(color: Color(0xFFDEDEDE))),
-                          trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
+                          leading: const Icon(Icons.remove_red_eye,
+                              color: Color(0xFFDEDEDE)),
+                          title: const Text('Переглянуті',
+                              style: TextStyle(color: Color(0xFFDEDEDE))),
+                          trailing: const Icon(Icons.arrow_forward_ios,
+                              color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => ViewedMovies(userId: friendId),
+                                builder: (context) =>
+                                    ViewedMovies(userId: friendId),
                               ),
                             );
                           },
                         ),
                         ListTile(
-                          leading: const Icon(Icons.playlist_add, color: Color(0xFFDEDEDE)),
-                          title: const Text('Заплановані', style: TextStyle(color: Color(0xFFDEDEDE))),
-                          trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
+                          leading: const Icon(Icons.playlist_add,
+                              color: Color(0xFFDEDEDE)),
+                          title: const Text('Заплановані',
+                              style: TextStyle(color: Color(0xFFDEDEDE))),
+                          trailing: const Icon(Icons.arrow_forward_ios,
+                              color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => PlannedMovies(userId: friendId),
+                                builder: (context) =>
+                                    PlannedMovies(userId: friendId),
                               ),
                             );
                           },
                         ),
                         ListTile(
-                          leading: const Icon(Icons.delete, color: Color(0xFFDEDEDE)),
-                          title: const Text('Покинуті', style: TextStyle(color: Color(0xFFDEDEDE))),
-                          trailing: const Icon(Icons.arrow_forward_ios, color: Color(0xFFDEDEDE), size: 18),
+                          leading: const Icon(Icons.delete,
+                              color: Color(0xFFDEDEDE)),
+                          title: const Text('Покинуті',
+                              style: TextStyle(color: Color(0xFFDEDEDE))),
+                          trailing: const Icon(Icons.arrow_forward_ios,
+                              color: Color(0xFFDEDEDE), size: 18),
                           onTap: () {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => AbandonedMovies(userId: friendId),
+                                builder: (context) =>
+                                    AbandonedMovies(userId: friendId),
                               ),
                             );
                           },
+                        ),
+                        const SizedBox(height: 15),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Дія при натисканні на кнопку "Порадувати Преміум"
+                            },
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(200, 50),
+                              backgroundColor:
+                                  const Color(0xFF242729), // колір кнопки
+                              foregroundColor: const Color(0xFFDEDEDE),
+                            ),
+                            child: Text(
+                              'Порадувати преміум 🎁',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.normal),
+                            ),
+                          ),
                         ),
                       ],
                     ),

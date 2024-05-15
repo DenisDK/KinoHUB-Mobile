@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<int>> getWatchedFromIds(String userCollection, String userId) async {
+Future<List<int>> getWatchedFromIds(
+    String userCollection, String userId) async {
   final String collection = userCollection;
   final userRef = FirebaseFirestore.instance.collection('Users').doc(userId);
 
@@ -21,7 +21,6 @@ Future<List<int>> getWatchedFromIds(String userCollection, String userId) async 
     return [];
   }
 }
-
 
 Future<List<Map<String, dynamic>>> fetchMoviesByIds(List<int> movieIds) async {
   List<Future<Map<String, dynamic>>> fetchFutures = [];
@@ -83,8 +82,8 @@ Future<List<Map<String, dynamic>>> watchedMovies(String userId) async {
 }
 
 Future<List<Map<String, dynamic>>> abandonedMovies(String userId) async {
-  List<int> abandonedMovieIds = await getWatchedFromIds('AbandonedMovies', userId);
+  List<int> abandonedMovieIds =
+      await getWatchedFromIds('AbandonedMovies', userId);
 
   return fetchMoviesByIds(abandonedMovieIds);
 }
-

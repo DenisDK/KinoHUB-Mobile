@@ -37,7 +37,8 @@ class CustomDialogAlert {
               child: const Text(
                 'Ні',
                 style: TextStyle(
-                  color: Color(0xFFDEDEDE), // Колір тексту кнопки "Ні"
+                  color: Color.fromARGB(
+                      255, 242, 111, 50), // Колір тексту кнопки "Ні"
                   fontFamily: 'Roboto',
                 ),
               ),
@@ -49,7 +50,8 @@ class CustomDialogAlert {
               child: const Text(
                 'Так',
                 style: TextStyle(
-                  color: Color(0xFFDEDEDE), // Колір тексту кнопки "Так"
+                  color: Color.fromARGB(
+                      255, 242, 111, 50), // Колір тексту кнопки "Так"
                   fontFamily: 'Roboto',
                 ),
               ),

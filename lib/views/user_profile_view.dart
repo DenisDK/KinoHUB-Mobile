@@ -164,20 +164,31 @@ class _UserProfileState extends State<UserProfile> {
                                               children: [
                                                 ElevatedButton(
                                                   style: ButtonStyle(
-                                                    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
-                                                    minimumSize: MaterialStateProperty.all<Size>(Size.zero),
+                                                    padding: MaterialStateProperty
+                                                        .all<EdgeInsetsGeometry>(
+                                                            EdgeInsets.zero),
+                                                    minimumSize:
+                                                        MaterialStateProperty
+                                                            .all<Size>(
+                                                                Size.zero),
                                                   ),
-                                                  onPressed: (){
+                                                  onPressed: () {
                                                     Navigator.push(
                                                       context,
                                                       CustomPageRoute(
-                                                        builder: (context) => FriendProfileView(friendId: friendId),
+                                                        builder: (context) =>
+                                                            FriendProfileView(
+                                                                friendId:
+                                                                    friendId),
                                                       ),
                                                     );
-                                                  }, 
+                                                  },
                                                   child: CircleAvatar(
-                                                    backgroundImage: NetworkImage(
-                                                      friendData['profile_image'] ?? '',
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                      friendData[
+                                                              'profile_image'] ??
+                                                          '',
                                                     ),
                                                     radius: 30,
                                                   ),
@@ -186,18 +197,33 @@ class _UserProfileState extends State<UserProfile> {
                                                   top: -15,
                                                   right: -15,
                                                   child: IconButton(
-                                                    icon: Icon(Icons.delete),
-                                                    color: Colors.red,
+                                                    icon: Icon(Icons.delete,
+                                                        size: 23),
+                                                    color: Color.fromARGB(
+                                                        255, 242, 111, 50),
                                                     onPressed: () {
                                                       showDialog(
                                                         context: context,
                                                         builder: (BuildContext
                                                             context) {
                                                           return AlertDialog(
-                                                            title: const Text(
-                                                                "Видалити друга?"),
-                                                            content: const Text(
-                                                                "Ви впевнені, що хочете видалити цього друга?"),
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .grey[800],
+                                                            title: Text(
+                                                              "Видалити друга?",
+                                                              style: TextStyle(
+                                                                color: const Color(
+                                                                    0xFFDEDEDE), // Задаємо колір тексту заголовка
+                                                              ),
+                                                            ),
+                                                            content: Text(
+                                                              "Ви впевнені, що хочете видалити цього друга?",
+                                                              style: TextStyle(
+                                                                color: const Color(
+                                                                    0xFFDEDEDE), // Задаємо колір тексту контенту
+                                                              ),
+                                                            ),
                                                             actions: [
                                                               TextButton(
                                                                 child:
@@ -205,8 +231,12 @@ class _UserProfileState extends State<UserProfile> {
                                                                   "Ні",
                                                                   style:
                                                                       TextStyle(
-                                                                    color: Color(
-                                                                        0xFFFF5200),
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            242,
+                                                                            111,
+                                                                            50),
                                                                   ),
                                                                 ),
                                                                 onPressed: () {
@@ -221,24 +251,37 @@ class _UserProfileState extends State<UserProfile> {
                                                                   "Так",
                                                                   style:
                                                                       TextStyle(
-                                                                    color: Color(
-                                                                        0xFFFF5200),
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            242,
+                                                                            111,
+                                                                            50),
                                                                   ),
                                                                 ),
                                                                 onPressed: () {
                                                                   String
-                                                                    friendId =  userData['friends'][index];
+                                                                      friendId =
+                                                                      userData[
+                                                                              'friends']
+                                                                          [
+                                                                          index];
                                                                   FirebaseFirestore
                                                                       .instance
-                                                                      .collection('Users')
-                                                                      .doc(user!.uid)
+                                                                      .collection(
+                                                                          'Users')
+                                                                      .doc(user!
+                                                                          .uid)
                                                                       .update({
                                                                     'friends':
-                                                                      FieldValue
-                                                                      .arrayRemove([friendId])
+                                                                        FieldValue
+                                                                            .arrayRemove([
+                                                                      friendId
+                                                                    ])
                                                                   });
-                                                                  Navigator.of(context)
-                                                                    .pop();
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
                                                                 },
                                                               ),
                                                             ],
@@ -305,7 +348,8 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => ViewedMovies(userId: user.uid),
+                                builder: (context) =>
+                                    ViewedMovies(userId: user.uid),
                               ),
                             );
                           },
@@ -321,7 +365,8 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => PlannedMovies(userId: user.uid),
+                                builder: (context) =>
+                                    PlannedMovies(userId: user.uid),
                               ),
                             );
                           },
@@ -337,7 +382,8 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.push(
                               context,
                               CustomPageRoute(
-                                builder: (context) => AbandonedMovies(userId: user.uid),
+                                builder: (context) =>
+                                    AbandonedMovies(userId: user.uid),
                               ),
                             );
                           },
