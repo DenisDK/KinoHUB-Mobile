@@ -20,7 +20,6 @@ class _ViewedMoviesState extends State<ViewedMovies> {
     super.initState();
     movies = watchedMovies(widget.userId);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
