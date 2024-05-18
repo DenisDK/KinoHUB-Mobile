@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/firestore_database/methods_for_movie_list.dart';
 import 'package:kinohub/views/movie_detail_view.dart';
-import 'package:kinohub/views/user_profile_view.dart';
 
 class PlannedMovies extends StatefulWidget {
   final String userId;

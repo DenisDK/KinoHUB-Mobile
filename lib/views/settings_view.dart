@@ -18,6 +18,7 @@ class _SettingsViewState extends State<SettingsView> {
   User? user = FirebaseAuth.instance.currentUser;
   File? _image;
   var userData;
+  bool isPremium = false;
   TextEditingController _nicknameController = TextEditingController();
 
   @override
@@ -36,6 +37,7 @@ class _SettingsViewState extends State<SettingsView> {
           );
         } else {
           userData = snapshot.data!.data() as Map<String, dynamic>;
+          isPremium = userData['isPremium'] ?? false;
           return Scaffold(
             appBar: AppBar(
               title: const Text(
@@ -190,9 +192,18 @@ class _SettingsViewState extends State<SettingsView> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+      if (isPremium) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Для встановлення анімованого фото профілю необхідний преміум план.'),
+          ),
+        );
+      }
     }
   }
 

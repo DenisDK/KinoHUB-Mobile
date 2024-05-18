@@ -38,8 +38,10 @@ void main() async {
         userProfileRoute: (context) => const UserProfile(),
         userRegistrationRoute: (context) => const RegistrationView(),
         settingsRoute: (context) => const SettingsView(),
-        premiumRoute: (context) => const PremiumView(),
-        friendProfileRoute: (context) => const FriendProfileView(friendId: '',),
+        premiumRoute: (context) => PremiumView(),
+        friendProfileRoute: (context) => const FriendProfileView(
+              friendId: '',
+            ),
       },
     ),
   );

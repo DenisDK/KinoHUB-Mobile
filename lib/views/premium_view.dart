@@ -14,7 +14,6 @@ class PremiumView extends StatefulWidget {
 }
 
 class _PremiumViewState extends State<PremiumView> {
-
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
@@ -35,12 +34,12 @@ class _PremiumViewState extends State<PremiumView> {
         } else {
           userData = snapshot.data!.data() as Map<String, dynamic>;
           bool isPremium = userData['isPremium'] ?? false;
-          
+
           if (isPremium) {
             return Scaffold(
               appBar: AppBar(
                 title: const Text(
-                  'Преміум-підписка',
+                  'Преміум план',
                   style: TextStyle(
                     color: Color(0xFFD3D3D3),
                     fontSize: 20,
@@ -65,9 +64,28 @@ class _PremiumViewState extends State<PremiumView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Icon(
+                        Icons.workspace_premium,
+                        color: Color.fromARGB(255, 233, 156, 88),
+                        size: 100,
+                      ),
+                      SizedBox(height: 20),
                       Text(
-                        'Ви вже маєте преміум-підписку!',
-                        style: TextStyle(color: Color(0xFFD3D3D3), fontSize: 20),
+                        'Ласкаво просимо до нашої елітної спільноти!',
+                        style: TextStyle(
+                          color: Color(0xFFD3D3D3),
+                          fontSize: 20,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Дякуємо за вашу підтримку !',
+                        style: TextStyle(
+                          color: Color(0xFFD3D3D3),
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -75,31 +93,35 @@ class _PremiumViewState extends State<PremiumView> {
               ),
             );
           } else {
-            // Якщо преміум-статус відсутній, відображаємо кнопку купівлі
-            var googlePayButton = GooglePayButton(
-              paymentConfiguration: PaymentConfiguration.fromJsonString(defaultGooglePay),
-              paymentItems: const [
-                PaymentItem(
-                  label: 'Total',
-                  amount: '0.01',
-                  status: PaymentItemStatus.final_price,
-                )
-              ],
-              type: GooglePayButtonType.buy,
-              margin: const EdgeInsets.only(top: 15.0),
-              onPaymentResult: (result) async {
-                debugPrint('Payment Result $result');
-                await _updateUserPremiumStatus();
-              },
-              loadingIndicator: const Center(
-                child: CircularProgressIndicator(),
+            var googlePayButton = Container(
+              width: 200,
+              height: 120,
+              child: GooglePayButton(
+                paymentConfiguration:
+                    PaymentConfiguration.fromJsonString(defaultGooglePay),
+                paymentItems: const [
+                  PaymentItem(
+                    label: 'Total',
+                    amount: '200.00',
+                    status: PaymentItemStatus.final_price,
+                  )
+                ],
+                type: GooglePayButtonType.subscribe,
+                margin: const EdgeInsets.only(top: 15.0),
+                onPaymentResult: (result) async {
+                  debugPrint('Payment Result $result');
+                  await _updateUserPremiumStatus();
+                },
+                loadingIndicator: const Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             );
 
             return Scaffold(
               appBar: AppBar(
                 title: const Text(
-                  'Преміум-підписка',
+                  'Преміум план',
                   style: TextStyle(
                     color: Color(0xFFD3D3D3),
                     fontSize: 20,
@@ -122,24 +144,56 @@ class _PremiumViewState extends State<PremiumView> {
               body: SafeArea(
                 child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Padding(padding: EdgeInsets.only(top: 150)),
                       DecoratedBox(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Color(0xFFDEDEDE))
-                        ),
-                        child: const SizedBox(
+                            borderRadius: BorderRadius.circular(10),
+                            color: const Color(0xFF262626)),
+                        child: SizedBox(
                           width: 350,
-                          height: 150,
-                          child:  Text(
-                          'Отримайте преміум підписку та насолоджуйтесь наступними перевагами:\n\n'
-                          '- Без реклами\n'
-                          '- Додавання більше п\'яти друзів\n',
-                          style: TextStyle(color: Color(0xFFDEDEDE),fontSize: 16),
-                          textAlign: TextAlign.center,
-                        ),
+                          height: 425,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RichText(
+                                  text: const TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'П',
+                                        style: TextStyle(
+                                            color: Color(0xFFFF5200),
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: 'реміум план',
+                                        style: TextStyle(
+                                            color: Color(0xFFDEDEDE),
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Text(
+                                  '200 грн/назавжди',
+                                  style: TextStyle(
+                                      color: Color(0xFFDEDEDE), fontSize: 18),
+                                ),
+                                const Text(
+                                  '\n- Можливість додавати більше 5 друзів\n\n - Анімоване фото профілю \n\n - Преміум статус в профілі \n\n - Сповіщення про нові фільми',
+                                  style: TextStyle(
+                                      color: Color(0xFFDEDEDE), fontSize: 15),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 20),
                       googlePayButton,
                     ],
                   ),
@@ -150,7 +204,6 @@ class _PremiumViewState extends State<PremiumView> {
         }
       },
     );
-
   }
 
   Future<void> _updateUserPremiumStatus() async {
@@ -158,7 +211,10 @@ class _PremiumViewState extends State<PremiumView> {
 
     if (user != null) {
       try {
-        await FirebaseFirestore.instance.collection('Users').doc(user.uid).update({'isPremium': true});
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(user.uid)
+            .update({'isPremium': true});
         debugPrint('User isPremium status updated to true');
       } catch (e) {
         debugPrint('Failed to update isPremium status: $e');

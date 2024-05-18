@@ -136,6 +136,17 @@ class _RegistrationViewState extends State<RegistrationView> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      final bool isGif = pickedFile.path.toLowerCase().endsWith('.gif');
+      if (isGif) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Неможливо використовувати анімовані аватарки без преміума.'),
+          ),
+        );
+        return;
+      }
+
       setState(() {
         _image = File(pickedFile.path);
       });
