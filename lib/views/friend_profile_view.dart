@@ -78,15 +78,31 @@ class FriendProfileView extends StatelessWidget {
                                       'Нікнейм скопійовано: ${userData['nickname']}'),
                                 ));
                               },
-                              child: Text(
-                                _truncateNickname(
-                                    userData['nickname'] ?? '', 12),
-                                style: const TextStyle(
-                                  color: Color(0xFFDEDEDE),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    _truncateNickname(
+                                        userData['nickname'] ?? '', 12),
+                                    style: const TextStyle(
+                                      color: Color(0xFFDEDEDE),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  if (userData['isPremium'] == true)
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
+                                      child: Icon(
+                                        Icons.workspace_premium,
+                                        color:
+                                            Color.fromARGB(255, 233, 156, 88),
+                                        size: 24,
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 15),

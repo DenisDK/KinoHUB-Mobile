@@ -71,15 +71,31 @@ class _UserProfileState extends State<UserProfile> {
                                       'Нікнейм скопійовано: ${userData['nickname']}'),
                                 ));
                               },
-                              child: Text(
-                                _truncateNickname(
-                                    userData['nickname'] ?? '', 12),
-                                style: const TextStyle(
-                                  color: Color(0xFFDEDEDE),
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    _truncateNickname(
+                                        userData['nickname'] ?? '', 12),
+                                    style: const TextStyle(
+                                      color: Color(0xFFDEDEDE),
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  if (userData['isPremium'] == true)
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 4),
+                                      child: Icon(
+                                        Icons.workspace_premium,
+                                        color:
+                                            Color.fromARGB(255, 233, 156, 88),
+                                        size: 24,
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 15),
@@ -141,7 +157,7 @@ class _UserProfileState extends State<UserProfile> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
+                                        return const CircularProgressIndicator();
                                       }
                                       if (snapshot.hasError) {
                                         return Text('Error: ${snapshot.error}');
@@ -197,9 +213,10 @@ class _UserProfileState extends State<UserProfile> {
                                                   top: -15,
                                                   right: -15,
                                                   child: IconButton(
-                                                    icon: Icon(Icons.delete,
+                                                    icon: const Icon(
+                                                        Icons.delete,
                                                         size: 23),
-                                                    color: Color.fromARGB(
+                                                    color: const Color.fromARGB(
                                                         255, 242, 111, 50),
                                                     onPressed: () {
                                                       showDialog(
@@ -210,17 +227,17 @@ class _UserProfileState extends State<UserProfile> {
                                                             backgroundColor:
                                                                 Colors
                                                                     .grey[800],
-                                                            title: Text(
+                                                            title: const Text(
                                                               "Видалити друга?",
                                                               style: TextStyle(
-                                                                color: const Color(
+                                                                color: Color(
                                                                     0xFFDEDEDE), // Задаємо колір тексту заголовка
                                                               ),
                                                             ),
-                                                            content: Text(
+                                                            content: const Text(
                                                               "Ви впевнені, що хочете видалити цього друга?",
                                                               style: TextStyle(
-                                                                color: const Color(
+                                                                color: Color(
                                                                     0xFFDEDEDE), // Задаємо колір тексту контенту
                                                               ),
                                                             ),
@@ -406,7 +423,7 @@ class _UserProfileState extends State<UserProfile> {
                             Navigator.pushReplacement(
                               context,
                               CustomPageRoute(
-                                builder: (context) => PremiumView(),
+                                builder: (context) => const PremiumView(),
                               ),
                             );
                           },
@@ -461,7 +478,7 @@ class _UserProfileState extends State<UserProfile> {
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (!snapshot.hasData || snapshot.data == null) {
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
                       }
                       List<DocumentSnapshot> documents = snapshot.data!.docs;
 
@@ -523,7 +540,7 @@ class _UserProfileState extends State<UserProfile> {
                                 return Dismissible(
                                     key: Key(filteredDocuments[index].id),
                                     child: Padding(
-                                        padding: EdgeInsets.only(top: 10),
+                                        padding: const EdgeInsets.only(top: 10),
                                         child: ListTile(
                                           tileColor: Colors.grey[700],
                                           shape: RoundedRectangleBorder(

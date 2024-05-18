@@ -183,7 +183,7 @@ class _PremiumViewState extends State<PremiumView> {
                                       color: Color(0xFFDEDEDE), fontSize: 18),
                                 ),
                                 const Text(
-                                  '\n- Можливість додавати більше 5 друзів\n\n - Анімоване фото профілю \n\n - Преміум статус в профілі \n\n - Сповіщення про нові фільми',
+                                  '\n- Можливість додавати більше 5 друзів\n\n - Анімоване фото профілю \n\n - Преміум статус в профілі ',
                                   style: TextStyle(
                                       color: Color(0xFFDEDEDE), fontSize: 15),
                                   textAlign: TextAlign.center,
