@@ -94,20 +94,20 @@ class _PremiumViewState extends State<PremiumView> {
             );
           } else {
             var googlePayButton = Container(
-              width: 200,
-              height: 120,
+              width: 325,
+              height: 100,
               child: GooglePayButton(
                 paymentConfiguration:
                     PaymentConfiguration.fromJsonString(defaultGooglePay),
                 paymentItems: const [
                   PaymentItem(
                     label: 'Total',
-                    amount: '200.00',
+                    amount: '200',
                     status: PaymentItemStatus.final_price,
                   )
                 ],
                 type: GooglePayButtonType.pay,
-                margin: const EdgeInsets.only(top: 15.0),
+                margin: const EdgeInsets.only(top: 10.0),
                 onPaymentResult: (result) async {
                   debugPrint('Payment Result $result');
                   await _updateUserPremiumStatus();

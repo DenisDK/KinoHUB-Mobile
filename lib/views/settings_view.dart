@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/views/user_profile_view.dart';
+import 'package:image/image.dart' as img;
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
@@ -192,9 +193,18 @@ class _SettingsViewState extends State<SettingsView> {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      if (isPremium) {
+      final fileExtension = pickedFile.path.split('.').last.toLowerCase();
+      final isGIF = fileExtension == 'gif';
+
+      if (isPremium || (!isPremium && !isGIF)) {
+        File selectedImage = File(pickedFile.path);
+
+        if (!isGIF) {
+          selectedImage = await _compressImage(selectedImage);
+        }
+
         setState(() {
-          _image = File(pickedFile.path);
+          _image = selectedImage;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -204,6 +214,18 @@ class _SettingsViewState extends State<SettingsView> {
           ),
         );
       }
+    }
+  }
+
+  Future<File> _compressImage(File file) async {
+    final image = img.decodeImage(file.readAsBytesSync());
+    if (image != null) {
+      final compressedImage = img.encodeJpg(image, quality: 50);
+      final compressedImageFile = File(file.path)
+        ..writeAsBytesSync(compressedImage);
+      return compressedImageFile;
+    } else {
+      return file;
     }
   }
 

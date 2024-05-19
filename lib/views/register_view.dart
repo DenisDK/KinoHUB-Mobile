@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kinohub/routes/routes.dart';
+import 'package:image/image.dart' as img;
 
 class RegistrationView extends StatefulWidget {
   const RegistrationView({Key? key}) : super(key: key);
@@ -147,9 +148,22 @@ class _RegistrationViewState extends State<RegistrationView> {
         return;
       }
 
+      final compressedImage = await _compressImage(File(pickedFile.path));
       setState(() {
-        _image = File(pickedFile.path);
+        _image = compressedImage;
       });
+    }
+  }
+
+  Future<File> _compressImage(File file) async {
+    final image = img.decodeImage(file.readAsBytesSync());
+    if (image != null) {
+      final compressedImage = img.encodeJpg(image, quality: 50);
+      final compressedImageFile = File(file.path)
+        ..writeAsBytesSync(compressedImage);
+      return compressedImageFile;
+    } else {
+      return file;
     }
   }
 

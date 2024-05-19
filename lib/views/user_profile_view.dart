@@ -299,7 +299,7 @@ class _UserProfileState extends State<UserProfile> {
                                                                         .instance
                                                                         .collection(
                                                                             'Users')
-                                                                        .doc(user!
+                                                                        .doc(user
                                                                             .uid)
                                                                         .update({
                                                                       'friends':
@@ -435,7 +435,7 @@ class _UserProfileState extends State<UserProfile> {
                             trailing: const Icon(Icons.arrow_forward_ios,
                                 color: Color(0xFFDEDEDE), size: 18),
                             onTap: () {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 CustomPageRoute(
                                   builder: (context) => const PremiumView(),
