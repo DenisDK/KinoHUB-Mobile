@@ -106,7 +106,7 @@ class _PremiumViewState extends State<PremiumView> {
                     status: PaymentItemStatus.final_price,
                   )
                 ],
-                type: GooglePayButtonType.subscribe,
+                type: GooglePayButtonType.pay,
                 margin: const EdgeInsets.only(top: 15.0),
                 onPaymentResult: (result) async {
                   debugPrint('Payment Result $result');
