@@ -1,9 +1,11 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/views/abandoned_list_view.dart';
 import 'package:kinohub/views/planned_list_view.dart';
+import 'package:kinohub/views/premium_view.dart';
 import 'package:kinohub/views/user_profile_view.dart';
 import 'package:kinohub/views/viewed_list_view.dart';
 
@@ -13,6 +15,7 @@ class FriendProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var userData;
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('Users')
@@ -26,7 +29,7 @@ class FriendProfileView extends StatelessWidget {
             ),
           );
         } else {
-          var userData = snapshot.data!.data() as Map<String, dynamic>;
+          userData = snapshot.data!.data() as Map<String, dynamic>;
           return Scaffold(
             appBar: AppBar(
               title: Text(
@@ -287,23 +290,7 @@ class FriendProfileView extends StatelessWidget {
                           const SizedBox(height: 15),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // Дія при натисканні на кнопку "Порадувати Преміум"
-                              },
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(200, 50),
-                                backgroundColor:
-                                    const Color(0xFF242729), // колір кнопки
-                                foregroundColor: const Color(0xFFDEDEDE),
-                              ),
-                              child: Text(
-                                'Порадувати преміум 🎁',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal),
-                              ),
-                            ),
+                            child: giftPremium(context ,userData)
                           ),
                         ],
                       ),
@@ -323,6 +310,36 @@ class FriendProfileView extends StatelessWidget {
       return nickname.substring(0, maxLength) + '...';
     } else {
       return nickname;
+    }
+  }
+
+  Widget giftPremium (BuildContext context, var userData){
+    if(!userData['isPremium']){
+      return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          CustomPageRoute(
+            builder: (context) => PremiumView(userId: friendId),
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size(200, 50),
+        backgroundColor:
+        const Color(0xFF242729), // колір кнопки
+          foregroundColor: const Color(0xFFDEDEDE),
+        ),
+        child: const Text(
+          'Порадувати преміум 🎁',
+          style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal),
+        ),
+      );
+    }
+    else{
+      return const Padding(padding: EdgeInsets.only(top: 5));
     }
   }
 }

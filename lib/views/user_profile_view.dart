@@ -438,7 +438,7 @@ class _UserProfileState extends State<UserProfile> {
                               Navigator.push(
                                 context,
                                 CustomPageRoute(
-                                  builder: (context) => const PremiumView(),
+                                  builder: (context) => PremiumView(userId: user.uid,),
                                 ),
                               );
                             },

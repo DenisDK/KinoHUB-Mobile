@@ -7,7 +7,8 @@ import 'package:kinohub/views/user_profile_view.dart';
 import 'package:pay/pay.dart';
 
 class PremiumView extends StatefulWidget {
-  const PremiumView({super.key});
+  final String userId;
+  const PremiumView({super.key, required this.userId});
 
   @override
   State<PremiumView> createState() => _PremiumViewState();
@@ -16,13 +17,12 @@ class PremiumView extends StatefulWidget {
 class _PremiumViewState extends State<PremiumView> {
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
     var userData;
 
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
           .collection('Users')
-          .doc(user!.uid)
+          .doc(widget.userId)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -50,12 +50,7 @@ class _PremiumViewState extends State<PremiumView> {
                   icon: const Icon(Icons.arrow_back),
                   color: const Color(0xFFD3D3D3),
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      CustomPageRoute(
-                        builder: (context) => const UserProfile(),
-                      ),
-                    );
+                    Navigator.pop(context);
                   },
                 ),
               ),
@@ -213,7 +208,7 @@ class _PremiumViewState extends State<PremiumView> {
       try {
         await FirebaseFirestore.instance
             .collection('Users')
-            .doc(user.uid)
+            .doc(widget.userId)
             .update({'isPremium': true});
         debugPrint('User isPremium status updated to true');
       } catch (e) {
