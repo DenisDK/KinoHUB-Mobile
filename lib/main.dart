@@ -14,11 +14,17 @@ import 'package:kinohub/views/settings_view.dart';
 import 'package:kinohub/views/user_profile_view.dart';
 import 'routes/routes.dart';
 import 'views/login_view.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:developer' as developer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: "api_key.env");
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // Отримання токену для отримання повідомлень
+  String? token = await messaging.getToken();
+  developer.log(token!);
 
   runApp(
     MaterialApp(
@@ -38,7 +44,9 @@ void main() async {
         userProfileRoute: (context) => const UserProfile(),
         userRegistrationRoute: (context) => const RegistrationView(),
         settingsRoute: (context) => const SettingsView(),
-        premiumRoute: (context) => PremiumView(userId: '',),
+        premiumRoute: (context) => PremiumView(
+              userId: '',
+            ),
         friendProfileRoute: (context) => const FriendProfileView(
               friendId: '',
             ),
