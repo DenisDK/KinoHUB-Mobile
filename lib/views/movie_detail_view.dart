@@ -18,6 +18,8 @@ class MovieDetailScreen extends StatefulWidget {
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   String buttonName = 'Додати до списку';
+  bool liked = false;
+  bool disliked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +83,39 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   ),
                                 ),
                               ),
+                            ),
+                            const SizedBox(height: 10),
+                            FutureBuilder(
+                              future: fetchUserRating(widget.movieId),
+                              builder: (context, AsyncSnapshot<double> ratingSnapshot) {
+                                if (ratingSnapshot.connectionState == ConnectionState.waiting) {
+                                  return const Center(child: CircularProgressIndicator());
+                                } else if (ratingSnapshot.hasError) {
+                                  return Center(child: Text('Помилка: ${ratingSnapshot.error}'));
+                                } else {
+                                  double userRating = ratingSnapshot.data!;
+                                  return Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    width: MediaQuery.of(context).size.width * 0.4,
+                                    height: 40.0,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(255, 255, 160, 59),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Користувачі: ${userRating.toInt()}',
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                             ),
                             const SizedBox(height: 10),
                             Container(
@@ -186,7 +221,58 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                   ),
                                 ),
                               ),
-                            )
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.19,
+                                  height: 50.0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    color: liked ? Color.fromARGB(255, 54, 109, 63) : const Color(0xFF242729),
+                                  ),
+                                  child: Center(
+                                    child: IconButton(
+                                      icon: const Icon(Icons.thumb_up, color: Color(0xFFDEDEDE)),
+                                      onPressed: () async {
+                                        setState(() {
+                                          liked = !liked;
+                                          if (liked) {
+                                            disliked = false;
+                                          }
+                                          handleLike(widget.movieId);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.19,
+                                  height: 50.0,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    color: disliked ? Color.fromARGB(255, 129, 56, 56) : const Color(0xFF242729),
+                                  ),
+                                  child: Center(
+                                    child: IconButton(
+                                      icon: const Icon(Icons.thumb_down, color: Color(0xFFDEDEDE)),
+                                      onPressed: () async {
+                                        setState(() {
+                                          disliked = !disliked;
+                                          if (disliked) {
+                                            liked = false;
+                                          }
+                                          handleDislike(widget.movieId);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ],
@@ -368,5 +454,126 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   void initState() {
     super.initState();
     checkIfMovieAdded(context, widget.movieId);
+    checkUserChoice(widget.movieId);
+  }
+
+  Future<void> handleLike(int movieId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final userId = user.uid;
+    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(ratingRef);
+      if (!snapshot.exists) {
+        // Create a new document if it doesn't exist
+        transaction.set(ratingRef, {
+          'filmID': movieId,
+          'likes': [userId],
+          'dislikes': [],
+        });
+      } else {
+        List<dynamic> likes = snapshot.get('likes');
+        List<dynamic> dislikes = snapshot.get('dislikes');
+
+        if (likes.contains(userId)) {
+          likes.remove(userId);
+        } else {
+          likes.add(userId);
+          if (dislikes.contains(userId)) {
+            dislikes.remove(userId);
+          }
+        }
+
+        transaction.update(ratingRef, {
+          'likes': likes,
+          'dislikes': dislikes,
+        });
+      }
+    });
+    }
+  }
+  Future<void> handleDislike(int movieId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final userId = user.uid;
+    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+
+    FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(ratingRef);
+      if (!snapshot.exists) {
+        // Create a new document if it doesn't exist
+        transaction.set(ratingRef, {
+          'filmID': movieId,
+          'likes': [],
+          'dislikes': [userId],
+        });
+      } else {
+        List<dynamic> likes = snapshot.get('likes');
+        List<dynamic> dislikes = snapshot.get('dislikes');
+
+        if (dislikes.contains(userId)) {
+          dislikes.remove(userId);
+        } else {
+          dislikes.add(userId);
+          if (likes.contains(userId)) {
+            likes.remove(userId);
+          }
+        }
+
+        transaction.update(ratingRef, {
+          'likes': likes,
+          'dislikes': dislikes,
+        });
+      }
+    });
+    }
+  }
+  Future<double> fetchUserRating(int movieId) async {
+    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+    final snapshot = await ratingRef.get();
+
+    if (snapshot.exists) {
+      List<dynamic> likes = snapshot.get('likes');
+      List<dynamic> dislikes = snapshot.get('dislikes');
+      int totalVotes = likes.length + dislikes.length;
+      if (totalVotes == 0) {
+        return 0.0;
+      } else {
+        double likePercentage = (likes.length / totalVotes) * 100;
+        return likePercentage;
+      }
+    } else {
+      return 0.0;
+    }
+  }
+  Future<void> checkUserChoice(int movieId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    final userId = user.uid;
+    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+
+    final snapshot = await ratingRef.get();
+
+    if (snapshot.exists) {
+      final data = snapshot.data() as Map<String, dynamic>;
+      final likes = List<String>.from(data['likes']);
+      final dislikes = List<String>.from(data['dislikes']);
+
+      if (likes.contains(userId)) {
+        // Користувач поставив лайк
+        setState(() {
+          liked = true;
+          disliked = false;
+        });
+      } else if (dislikes.contains(userId)) {
+        // Користувач поставив дизлайк
+        setState(() {
+          liked = false;
+          disliked = true;
+        });
+      }
+    }
+  }
   }
 }
