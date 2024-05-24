@@ -20,6 +20,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   String buttonName = 'Додати до списку';
   bool liked = false;
   bool disliked = false;
+  TextEditingController commentController = TextEditingController();
+  var user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -391,6 +393,134 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                       ],
                     ),
                   ),
+                  // Місце для написання нового коментаря
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Ваш коментар:',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFDEDEDE)
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: commentController,
+                          cursorColor: const Color(0xFFFF5200),
+                          decoration: const InputDecoration(
+                            labelText: 'Новий коментар',
+                            labelStyle: TextStyle(
+                              color: Color(0xFFDEDEDE),
+                            ),
+                          ),
+                          style: const TextStyle(color: Color(0xFFDEDEDE))
+                        ),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            addComment();
+                          },
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF242729)),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          child: const Text('Додати коментар', style: TextStyle(color: Color(0xFFDEDEDE)),),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Виведення коментарів
+                  StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection('Comments')
+                        .doc(widget.movieId.toString())
+                        .collection('comment')
+                        .snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Помилка: ${snapshot.error}'));
+                      }
+                      final comments = snapshot.data?.docs ?? [];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 18),
+                            child: Text(
+                              'Коментарі:',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFDEDEDE)
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              final comment = comments[index].data() as Map<String, dynamic>;
+                              return FutureBuilder(
+                                future: FirebaseFirestore.instance.collection('Users').doc(comment['userID']).get(),
+                                builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                    return const SizedBox(); // Placeholder widget while waiting for user data
+                                  }
+                                  if (userSnapshot.hasError) {
+                                    return Text('Помилка при завантаженні користувача: ${userSnapshot.error}');
+                                  }
+                                  final userData = userSnapshot.data?.data() as Map<String, dynamic>;
+                                  final nickname = userData['nickname'] ?? 'Анонімний користувач';
+                                  return ListTile(
+                                    title: Text(
+                                      'Користувач $nickname:', 
+                                      style: const TextStyle(
+                                        color: Color(0xFFDEDEDE),
+                                        fontSize: 18
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      comment['com'] ?? '', 
+                                      style: const TextStyle(
+                                        color: Color(0xFFDEDEDE),
+                                        fontSize: 15
+                                      ),
+                                    ),
+                                    trailing: user?.uid == comment['userID']
+                                        ? IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Color(0xFFFF5200),
+                                            ),
+                                            onPressed: () {
+                                              deleteComment(comments[index].reference);
+                                            },
+                                          )
+                                        : null,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             );
@@ -576,4 +706,48 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     }
   }
   }
+  // Метод для додавання нового коментаря до Firebase
+  void addComment() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userID = user.uid;
+      final commentText = commentController.text.trim();
+      if (commentText.isNotEmpty) {
+        FirebaseFirestore.instance
+            .collection('Comments')
+            .doc(widget.movieId.toString())
+            .collection('comment')
+            .add({
+          'com': commentText,
+          'userID': userID,
+          'timestamp': DateTime.now(),
+        }).then((value) {
+          // Очищення поля для коментаря після додавання
+          commentController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Коментар додано успішно!')),
+          );
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Помилка: $error')),
+          );
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Будь ласка, введіть коментар!')),
+        );
+      }
+    }
+  }
+  void deleteComment(DocumentReference commentRef) {
+  commentRef.delete().then((_) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Коментар видалено!')),
+    );
+  }).catchError((error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Помилка під час видалення коментаря: $error')),
+    );
+  });
+}
 }
