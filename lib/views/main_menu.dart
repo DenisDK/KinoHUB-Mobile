@@ -41,7 +41,6 @@ class _MainMenuState extends State<MainMenu> {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      // Доскроллили до конця списку, загрузили нові фільми
       fetchMovies();
     }
   }

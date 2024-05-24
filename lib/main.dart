@@ -15,7 +15,6 @@ import 'package:kinohub/views/user_profile_view.dart';
 import 'routes/routes.dart';
 import 'views/login_view.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'dart:developer' as developer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +23,6 @@ void main() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   // Отримання токену для отримання повідомлень
   String? token = await messaging.getToken();
-  developer.log(token!);
 
   runApp(
     MaterialApp(

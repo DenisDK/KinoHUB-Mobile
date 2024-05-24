@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +5,6 @@ import 'package:kinohub/components/custom_page_route.dart';
 import 'package:kinohub/views/abandoned_list_view.dart';
 import 'package:kinohub/views/planned_list_view.dart';
 import 'package:kinohub/views/premium_view.dart';
-import 'package:kinohub/views/user_profile_view.dart';
 import 'package:kinohub/views/viewed_list_view.dart';
 
 class FriendProfileView extends StatelessWidget {
@@ -44,12 +42,7 @@ class FriendProfileView extends StatelessWidget {
                 icon: const Icon(Icons.arrow_back),
                 color: const Color(0xFFD3D3D3),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    CustomPageRoute(
-                      builder: (context) => const UserProfile(),
-                    ),
-                  );
+                  Navigator.pop(context);
                 },
               ),
             ),
@@ -289,9 +282,8 @@ class FriendProfileView extends StatelessWidget {
                           ),
                           const SizedBox(height: 15),
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: giftPremium(context ,userData)
-                          ),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: giftPremium(context, userData)),
                         ],
                       ),
                     ],
@@ -313,32 +305,28 @@ class FriendProfileView extends StatelessWidget {
     }
   }
 
-  Widget giftPremium (BuildContext context, var userData){
-    if(!userData['isPremium']){
+  Widget giftPremium(BuildContext context, var userData) {
+    if (!userData['isPremium']) {
       return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          CustomPageRoute(
-            builder: (context) => PremiumView(userId: friendId),
-          ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(200, 50),
-        backgroundColor:
-        const Color(0xFF242729), // колір кнопки
+        onPressed: () {
+          Navigator.push(
+            context,
+            CustomPageRoute(
+              builder: (context) => PremiumView(userId: friendId),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(200, 50),
+          backgroundColor: const Color(0xFF242729), // колір кнопки
           foregroundColor: const Color(0xFFDEDEDE),
         ),
         child: const Text(
           'Порадувати преміум 🎁',
-          style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.normal),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
         ),
       );
-    }
-    else{
+    } else {
       return const Padding(padding: EdgeInsets.only(top: 5));
     }
   }

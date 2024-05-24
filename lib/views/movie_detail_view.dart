@@ -7,6 +7,9 @@ import 'package:kinohub/components/bottom_appbar_custom.dart';
 import 'package:kinohub/components/drop_down_for_film.dart';
 import 'package:kinohub/firestore_database/add_films_to_list.dart';
 
+import '../components/alert_dialog_custom.dart';
+import 'friend_profile_view.dart';
+
 class MovieDetailScreen extends StatefulWidget {
   final int movieId;
 
@@ -76,10 +79,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               ),
                               child: Center(
                                 child: Text(
-                                  'Рейтинг: ${movie.rating}',
+                                  'Рейтинг IMDB: ${movie.rating}',
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                    fontSize: 18.0,
+                                    fontSize: 14.84,
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -89,27 +92,34 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             const SizedBox(height: 10),
                             FutureBuilder(
                               future: fetchUserRating(widget.movieId),
-                              builder: (context, AsyncSnapshot<double> ratingSnapshot) {
-                                if (ratingSnapshot.connectionState == ConnectionState.waiting) {
-                                  return const Center(child: CircularProgressIndicator());
+                              builder: (context,
+                                  AsyncSnapshot<double> ratingSnapshot) {
+                                if (ratingSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
                                 } else if (ratingSnapshot.hasError) {
-                                  return Center(child: Text('Помилка: ${ratingSnapshot.error}'));
+                                  return Center(
+                                      child: Text(
+                                          'Помилка: ${ratingSnapshot.error}'));
                                 } else {
                                   double userRating = ratingSnapshot.data!;
                                   return Container(
                                     padding: const EdgeInsets.all(8.0),
-                                    width: MediaQuery.of(context).size.width * 0.4,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
                                     height: 40.0,
                                     decoration: BoxDecoration(
-                                      color: const Color.fromARGB(255, 255, 160, 59),
+                                      color: const Color.fromARGB(
+                                          255, 255, 160, 59),
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
                                     child: Center(
                                       child: Text(
-                                        'Користувачі: ${userRating.toInt()}',
+                                        'Рейтинг KinoHUB: ${userRating.toInt()}',
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
-                                          fontSize: 16.0,
+                                          fontSize: 14.8,
                                           color: Colors.black,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -124,8 +134,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               width: MediaQuery.of(context).size.width * 0.4,
                               height: 50.0,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: const Color(0xFF242729),
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color.fromARGB(255, 50, 50, 50),
                               ),
                               child: Center(
                                 child: DropdownButton<String>(
@@ -199,26 +209,37 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              height: 50.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: const Color(0xFF242729),
-                              ),
-                              child: Center(
-                                child: TextButton(
-                                  onPressed: () async {
-                                    String trailerUrl =
-                                        await fetchMovieTrailer(widget.movieId);
-                                    launchURL(trailerUrl, context);
-                                  },
-                                  child: const Text(
-                                    'Трейлер',
-                                    style: TextStyle(
-                                      color: Color(0xFFDEDEDE),
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.normal,
+                            GestureDetector(
+                              child: Material(
+                                color: Colors.transparent,
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(255, 50, 50, 50),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () async {
+                                      String trailerUrl =
+                                          await fetchMovieTrailer(
+                                              widget.movieId);
+                                      launchURL(trailerUrl, context);
+                                    },
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
+                                      height: 50.0,
+                                      child: const Center(
+                                        child: Text(
+                                          'Трейлер',
+                                          style: TextStyle(
+                                            color: Color(0xFFDEDEDE),
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -229,15 +250,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: MediaQuery.of(context).size.width * 0.19,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.19,
                                   height: 50.0,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    color: liked ? Color.fromARGB(255, 54, 109, 63) : const Color(0xFF242729),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: liked
+                                        ? const Color.fromARGB(255, 54, 109, 63)
+                                        : const Color.fromARGB(255, 50, 50, 50),
                                   ),
                                   child: Center(
                                     child: IconButton(
-                                      icon: const Icon(Icons.thumb_up, color: Color(0xFFDEDEDE)),
+                                      icon: const Icon(Icons.thumb_up,
+                                          color: Color(0xFFDEDEDE)),
                                       onPressed: () async {
                                         setState(() {
                                           liked = !liked;
@@ -252,15 +277,19 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                 ),
                                 const SizedBox(width: 10),
                                 Container(
-                                  width: MediaQuery.of(context).size.width * 0.19,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.19,
                                   height: 50.0,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    color: disliked ? Color.fromARGB(255, 129, 56, 56) : const Color(0xFF242729),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: disliked
+                                        ? const Color.fromARGB(255, 129, 56, 56)
+                                        : const Color.fromARGB(255, 50, 50, 50),
                                   ),
                                   child: Center(
                                     child: IconButton(
-                                      icon: const Icon(Icons.thumb_down, color: Color(0xFFDEDEDE)),
+                                      icon: const Icon(Icons.thumb_down,
+                                          color: Color(0xFFDEDEDE)),
                                       onPressed: () async {
                                         setState(() {
                                           disliked = !disliked;
@@ -283,7 +312,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF242729),
+                      color: const Color.fromARGB(255, 50, 50, 50),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
@@ -359,7 +388,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF242729),
+                      color: const Color.fromARGB(255, 50, 50, 50),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
@@ -394,51 +423,83 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                     ),
                   ),
                   // Місце для написання нового коментаря
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Ваш коментар:',
-                          style: TextStyle(
-                            fontSize: 18.0,
+                  Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      const Text(
+                        'Напишіть ваш відгук:',
+                        style: TextStyle(
+                            fontSize: 19.0,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFFDEDEDE)
-                          ),
+                            color: Color(0xFFDEDEDE)),
+                      ),
+                      const SizedBox(height: 15),
+                      Container(
+                        constraints: const BoxConstraints(
+                          maxWidth: 400,
                         ),
-                        const SizedBox(height: 10),
-                        TextField(
+                        child: TextField(
                           controller: commentController,
                           cursorColor: const Color(0xFFFF5200),
-                          decoration: const InputDecoration(
-                            labelText: 'Новий коментар',
-                            labelStyle: TextStyle(
-                              color: Color(0xFFDEDEDE),
+                          decoration: InputDecoration(
+                            labelText: 'Пишіть тут...',
+                            labelStyle:
+                                const TextStyle(color: Color(0xFFDEDEDE)),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Colors.transparent,
+                              ),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 50, 50, 50),
                           ),
-                          style: const TextStyle(color: Color(0xFFDEDEDE))
+                          style: const TextStyle(
+                              color: Color(0xFFDEDEDE), fontSize: 16.0),
+                          minLines: 1,
+                          maxLines: null,
                         ),
-                        const SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            addComment();
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF242729)),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      const SizedBox(height: 15),
+                      GestureDetector(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 50, 50, 50),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: InkWell(
+                              onTap: () async {
+                                addComment();
+                              },
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                height: 50.0,
+                                child: const Center(
+                                  child: Text(
+                                    'Додати відгук',
+                                    style: TextStyle(
+                                      color: Color(0xFFDEDEDE),
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                          child: const Text('Додати коментар', style: TextStyle(color: Color(0xFFDEDEDE)),),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  // Виведення коментарів
+                  const SizedBox(height: 10),
+                  // Коментарі
                   StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection('Comments')
@@ -450,68 +511,161 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.hasError) {
-                        return Center(child: Text('Помилка: ${snapshot.error}'));
+                        return Center(
+                            child: Text('Помилка: ${snapshot.error}'));
                       }
                       final comments = snapshot.data?.docs ?? [];
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 20),
                           const Padding(
-                            padding: EdgeInsets.only(left: 18),
+                            padding: EdgeInsets.only(top: 15),
                             child: Text(
-                              'Коментарі:',
+                              'Ішні відгуки:',
                               style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFDEDEDE)
-                              ),
+                                  fontSize: 19.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFDEDEDE)),
                             ),
                           ),
-                          const SizedBox(height: 10),
                           ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: comments.length,
                             itemBuilder: (context, index) {
-                              final comment = comments[index].data() as Map<String, dynamic>;
+                              final comment = comments[index].data()
+                                  as Map<String, dynamic>;
                               return FutureBuilder(
-                                future: FirebaseFirestore.instance.collection('Users').doc(comment['userID']).get(),
-                                builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
-                                  if (userSnapshot.connectionState == ConnectionState.waiting) {
-                                    return const SizedBox(); // Placeholder widget while waiting for user data
+                                future: FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(comment['userID'])
+                                    .get(),
+                                builder: (context,
+                                    AsyncSnapshot<DocumentSnapshot>
+                                        userSnapshot) {
+                                  if (userSnapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const SizedBox();
                                   }
                                   if (userSnapshot.hasError) {
-                                    return Text('Помилка при завантаженні користувача: ${userSnapshot.error}');
+                                    return Text(
+                                        'Помилка при завантаженні користувача: ${userSnapshot.error}');
                                   }
-                                  final userData = userSnapshot.data?.data() as Map<String, dynamic>;
-                                  final nickname = userData['nickname'] ?? 'Анонімний користувач';
-                                  return ListTile(
-                                    title: Text(
-                                      'Користувач $nickname:', 
-                                      style: const TextStyle(
-                                        color: Color(0xFFDEDEDE),
-                                        fontSize: 18
-                                      ),
+                                  final userData = userSnapshot.data?.data()
+                                      as Map<String, dynamic>;
+                                  final nickname = userData['nickname'] ??
+                                      'Анонімний користувач';
+                                  final bool isPremium =
+                                      userData['isPremium'] ?? false;
+
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    padding: const EdgeInsets.all(3.0),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          const Color.fromARGB(255, 50, 50, 50),
+                                      borderRadius: BorderRadius.circular(8.0),
                                     ),
-                                    subtitle: Text(
-                                      comment['com'] ?? '', 
-                                      style: const TextStyle(
-                                        color: Color(0xFFDEDEDE),
-                                        fontSize: 15
-                                      ),
-                                    ),
-                                    trailing: user?.uid == comment['userID']
-                                        ? IconButton(
-                                            icon: const Icon(
-                                              Icons.delete,
-                                              color: Color(0xFFFF5200),
-                                            ),
-                                            onPressed: () {
-                                              deleteComment(comments[index].reference);
+                                    child: ListTile(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder(
+                                            pageBuilder: (context, animation,
+                                                secondaryAnimation) {
+                                              return FriendProfileView(
+                                                  friendId: comment['userID']);
                                             },
-                                          )
-                                        : null,
+                                            transitionsBuilder: (context,
+                                                animation,
+                                                secondaryAnimation,
+                                                child) {
+                                              const begin = Offset(1.0, 0.0);
+                                              const end = Offset.zero;
+                                              const curve = Curves.ease;
+
+                                              var tween = Tween(
+                                                      begin: begin, end: end)
+                                                  .chain(
+                                                      CurveTween(curve: curve));
+
+                                              return SlideTransition(
+                                                position:
+                                                    animation.drive(tween),
+                                                child: child,
+                                              );
+                                            },
+                                            transitionDuration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      leading: CircleAvatar(
+                                        radius: 27,
+                                        backgroundImage: NetworkImage(
+                                            userData['profile_image'] ?? ''),
+                                      ),
+                                      title: Row(
+                                        children: [
+                                          if (isPremium)
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '${nickname ?? 'Анонімний користувач'}',
+                                                  style: const TextStyle(
+                                                      color: Color(0xFFDEDEDE),
+                                                      fontSize: 17.7,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                const SizedBox(width: 3),
+                                                const Icon(
+                                                  Icons.workspace_premium,
+                                                  color: Color.fromARGB(
+                                                      255, 233, 156, 88),
+                                                  size: 24,
+                                                ),
+                                              ],
+                                            ),
+                                          if (!isPremium)
+                                            Text(
+                                              '${nickname ?? 'Анонімний користувач'}',
+                                              style: const TextStyle(
+                                                  color: Color(0xFFDEDEDE),
+                                                  fontSize: 17.7,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                        ],
+                                      ),
+                                      subtitle: Text(
+                                        comment['com'] ?? '',
+                                        style: const TextStyle(
+                                          color: Color(0xFFDEDEDE),
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      trailing: user?.uid == comment['userID']
+                                          ? IconButton(
+                                              icon: const Icon(Icons.delete,
+                                                  color: Color.fromARGB(
+                                                      255, 242, 111, 50)),
+                                              onPressed: () async {
+                                                bool? result =
+                                                    await CustomDialogAlert
+                                                        .showConfirmationDialog(
+                                                  context,
+                                                  'Видалення відгуку',
+                                                  'Ви впевнені, що хочете видалити відгук?',
+                                                );
+                                                if (result != null && result) {
+                                                  deleteComment(comments[index]
+                                                      .reference);
+                                                } else {}
+                                              },
+                                            )
+                                          : null,
+                                    ),
                                   );
                                 },
                               );
@@ -588,79 +742,84 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
   }
 
   Future<void> handleLike(int movieId) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    final userId = user.uid;
-    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userId = user.uid;
+      final ratingRef = FirebaseFirestore.instance
+          .collection('Rating')
+          .doc(movieId.toString());
 
-    FirebaseFirestore.instance.runTransaction((transaction) async {
-      final snapshot = await transaction.get(ratingRef);
-      if (!snapshot.exists) {
-        // Create a new document if it doesn't exist
-        transaction.set(ratingRef, {
-          'filmID': movieId,
-          'likes': [userId],
-          'dislikes': [],
-        });
-      } else {
-        List<dynamic> likes = snapshot.get('likes');
-        List<dynamic> dislikes = snapshot.get('dislikes');
-
-        if (likes.contains(userId)) {
-          likes.remove(userId);
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(ratingRef);
+        if (!snapshot.exists) {
+          transaction.set(ratingRef, {
+            'filmID': movieId,
+            'likes': [userId],
+            'dislikes': [],
+          });
         } else {
-          likes.add(userId);
-          if (dislikes.contains(userId)) {
-            dislikes.remove(userId);
-          }
-        }
+          List<dynamic> likes = snapshot.get('likes');
+          List<dynamic> dislikes = snapshot.get('dislikes');
 
-        transaction.update(ratingRef, {
-          'likes': likes,
-          'dislikes': dislikes,
-        });
-      }
-    });
-    }
-  }
-  Future<void> handleDislike(int movieId) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    final userId = user.uid;
-    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
-
-    FirebaseFirestore.instance.runTransaction((transaction) async {
-      final snapshot = await transaction.get(ratingRef);
-      if (!snapshot.exists) {
-        // Create a new document if it doesn't exist
-        transaction.set(ratingRef, {
-          'filmID': movieId,
-          'likes': [],
-          'dislikes': [userId],
-        });
-      } else {
-        List<dynamic> likes = snapshot.get('likes');
-        List<dynamic> dislikes = snapshot.get('dislikes');
-
-        if (dislikes.contains(userId)) {
-          dislikes.remove(userId);
-        } else {
-          dislikes.add(userId);
           if (likes.contains(userId)) {
             likes.remove(userId);
+          } else {
+            likes.add(userId);
+            if (dislikes.contains(userId)) {
+              dislikes.remove(userId);
+            }
           }
-        }
 
-        transaction.update(ratingRef, {
-          'likes': likes,
-          'dislikes': dislikes,
-        });
-      }
-    });
+          transaction.update(ratingRef, {
+            'likes': likes,
+            'dislikes': dislikes,
+          });
+        }
+      });
     }
   }
+
+  Future<void> handleDislike(int movieId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userId = user.uid;
+      final ratingRef = FirebaseFirestore.instance
+          .collection('Rating')
+          .doc(movieId.toString());
+
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        final snapshot = await transaction.get(ratingRef);
+        if (!snapshot.exists) {
+          transaction.set(ratingRef, {
+            'filmID': movieId,
+            'likes': [],
+            'dislikes': [userId],
+          });
+        } else {
+          List<dynamic> likes = snapshot.get('likes');
+          List<dynamic> dislikes = snapshot.get('dislikes');
+
+          if (dislikes.contains(userId)) {
+            dislikes.remove(userId);
+          } else {
+            dislikes.add(userId);
+            if (likes.contains(userId)) {
+              likes.remove(userId);
+            }
+          }
+
+          transaction.update(ratingRef, {
+            'likes': likes,
+            'dislikes': dislikes,
+          });
+        }
+      });
+    }
+  }
+
   Future<double> fetchUserRating(int movieId) async {
-    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+    final ratingRef =
+        FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
     final snapshot = await ratingRef.get();
 
     if (snapshot.exists) {
@@ -670,43 +829,44 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       if (totalVotes == 0) {
         return 0.0;
       } else {
-        double likePercentage = (likes.length / totalVotes) * 100;
+        double likePercentage = (likes.length / totalVotes) * 10;
         return likePercentage;
       }
     } else {
       return 0.0;
     }
   }
+
   Future<void> checkUserChoice(int movieId) async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    final userId = user.uid;
-    final ratingRef = FirebaseFirestore.instance.collection('Rating').doc(movieId.toString());
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userId = user.uid;
+      final ratingRef = FirebaseFirestore.instance
+          .collection('Rating')
+          .doc(movieId.toString());
 
-    final snapshot = await ratingRef.get();
+      final snapshot = await ratingRef.get();
 
-    if (snapshot.exists) {
-      final data = snapshot.data() as Map<String, dynamic>;
-      final likes = List<String>.from(data['likes']);
-      final dislikes = List<String>.from(data['dislikes']);
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        final likes = List<String>.from(data['likes']);
+        final dislikes = List<String>.from(data['dislikes']);
 
-      if (likes.contains(userId)) {
-        // Користувач поставив лайк
-        setState(() {
-          liked = true;
-          disliked = false;
-        });
-      } else if (dislikes.contains(userId)) {
-        // Користувач поставив дизлайк
-        setState(() {
-          liked = false;
-          disliked = true;
-        });
+        if (likes.contains(userId)) {
+          setState(() {
+            liked = true;
+            disliked = false;
+          });
+        } else if (dislikes.contains(userId)) {
+          setState(() {
+            liked = false;
+            disliked = true;
+          });
+        }
       }
     }
   }
-  }
-  // Метод для додавання нового коментаря до Firebase
+
   void addComment() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -722,7 +882,6 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           'userID': userID,
           'timestamp': DateTime.now(),
         }).then((value) {
-          // Очищення поля для коментаря після додавання
           commentController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Коментар додано успішно!')),
@@ -739,15 +898,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
       }
     }
   }
+
   void deleteComment(DocumentReference commentRef) {
-  commentRef.delete().then((_) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Коментар видалено!')),
-    );
-  }).catchError((error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Помилка під час видалення коментаря: $error')),
-    );
-  });
-}
+    commentRef.delete().then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Коментар видалено!')),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Помилка під час видалення коментаря: $error')),
+      );
+    });
+  }
 }

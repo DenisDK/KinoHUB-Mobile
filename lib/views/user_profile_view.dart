@@ -82,7 +82,7 @@ class _UserProfileState extends State<UserProfile> {
                                           userData['nickname'] ?? '', 12),
                                       style: const TextStyle(
                                         color: Color(0xFFDEDEDE),
-                                        fontSize: 20,
+                                        fontSize: 19.7,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       textAlign: TextAlign.center,
@@ -197,11 +197,45 @@ class _UserProfileState extends State<UserProfile> {
                                                     onPressed: () {
                                                       Navigator.push(
                                                         context,
-                                                        CustomPageRoute(
-                                                          builder: (context) =>
-                                                              FriendProfileView(
-                                                                  friendId:
-                                                                      friendId),
+                                                        PageRouteBuilder(
+                                                          pageBuilder: (context,
+                                                              animation,
+                                                              secondaryAnimation) {
+                                                            return FriendProfileView(
+                                                                friendId:
+                                                                    friendId);
+                                                          },
+                                                          transitionsBuilder:
+                                                              (context,
+                                                                  animation,
+                                                                  secondaryAnimation,
+                                                                  child) {
+                                                            const begin =
+                                                                Offset(
+                                                                    1.0, 0.0);
+                                                            const end =
+                                                                Offset.zero;
+                                                            const curve =
+                                                                Curves.ease;
+
+                                                            var tween = Tween(
+                                                                    begin:
+                                                                        begin,
+                                                                    end: end)
+                                                                .chain(CurveTween(
+                                                                    curve:
+                                                                        curve));
+
+                                                            return SlideTransition(
+                                                              position: animation
+                                                                  .drive(tween),
+                                                              child: child,
+                                                            );
+                                                          },
+                                                          transitionDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      500),
                                                         ),
                                                       );
                                                     },
@@ -438,7 +472,9 @@ class _UserProfileState extends State<UserProfile> {
                               Navigator.push(
                                 context,
                                 CustomPageRoute(
-                                  builder: (context) => PremiumView(userId: user.uid,),
+                                  builder: (context) => PremiumView(
+                                    userId: user.uid,
+                                  ),
                                 ),
                               );
                             },

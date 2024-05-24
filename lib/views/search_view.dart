@@ -151,8 +151,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                   cursorColor: const Color(0xFFFF5200),
                   decoration: InputDecoration(
                     labelText: 'Пошук за назвою',
-                    labelStyle: const TextStyle(
-                        color: Color(0xFFDEDEDE)), // Колір тексту мітки
+                    labelStyle: const TextStyle(color: Color(0xFFDEDEDE)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -165,8 +164,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                     filled: true,
                     fillColor: Colors.grey[800],
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear,
-                          color: Color(0xFFDEDEDE)), // Колір іконки
+                      icon: const Icon(Icons.clear, color: Color(0xFFDEDEDE)),
                       onPressed: () {
                         setState(() {
                           _searchController.clear();
@@ -175,8 +173,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                       },
                     ),
                   ),
-                  style: const TextStyle(
-                      color: Color(0xFFDEDEDE)), // Колір тексту введення
+                  style: const TextStyle(color: Color(0xFFDEDEDE)),
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
@@ -205,8 +202,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                   onChanged: (String? newValue) {
                     setState(() {
                       _selectedGenre = newValue;
-                      _currentPage =
-                          1; // При зміні жанру повертаємося на першу сторінку
+                      _currentPage = 1;
                       fetchMoviesByGenre(newValue ?? '', _currentPage);
                     });
                   },
@@ -215,9 +211,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Colors
-                              .transparent), // Встановлюємо прозору обводку
+                      borderSide: const BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
@@ -243,11 +237,9 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
           Expanded(
             child: movies.isNotEmpty
                 ? ListView.builder(
-                    itemCount: movies.length +
-                        1, // Додатковий елемент для кнопки "Завантажити ще"
+                    itemCount: movies.length + 1,
                     itemBuilder: (context, index) {
                       if (index == movies.length) {
-                        // Перевірка, чи досягнута остання сторінка
                         return _buildLoadMoreButton();
                       } else {
                         return Padding(
