@@ -87,6 +87,12 @@ class _SettingsViewState extends State<SettingsView> {
                               const Color(0xFF242729)),
                           foregroundColor: MaterialStateProperty.all(
                               const Color(0xFFDEDEDE)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
                         ),
                         onPressed: _pickImage,
                         child: const Text(
@@ -134,6 +140,12 @@ class _SettingsViewState extends State<SettingsView> {
                               const Color(0xFF242729)),
                           foregroundColor: MaterialStateProperty.all(
                               const Color(0xFFDEDEDE)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
                         ),
                         onPressed: _updateUserProfileImage,
                         child: const Text(
@@ -220,7 +232,7 @@ class _SettingsViewState extends State<SettingsView> {
   Future<File> _compressImage(File file) async {
     final image = img.decodeImage(file.readAsBytesSync());
     if (image != null) {
-      final compressedImage = img.encodeJpg(image, quality: 50);
+      final compressedImage = img.encodeJpg(image, quality: 30);
       final compressedImageFile = File(file.path)
         ..writeAsBytesSync(compressedImage);
       return compressedImageFile;

@@ -103,7 +103,11 @@ class LoginView extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(200, 50),
                       backgroundColor: const Color(0xFF242729), // колір кнопки
-                      foregroundColor: const Color(0xFFDEDEDE), // колір тексту
+                      foregroundColor: const Color(0xFFDEDEDE),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            10.0), // радіус закруглення кутів
+                      ), // колір тексту
                     ),
                     child: const Text('Увійти через Google'),
                   ),

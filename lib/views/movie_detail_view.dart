@@ -20,7 +20,7 @@ class MovieDetailScreen extends StatefulWidget {
 }
 
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
-  String buttonName = 'Додати до списку';
+  String buttonName = 'Додати до';
   bool liked = false;
   bool disliked = false;
   TextEditingController commentController = TextEditingController();
@@ -61,8 +61,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image.network(
                             movie.poster,
-                            width: MediaQuery.of(context).size.width * 0.5 -
-                                20, // Змінили ширину постера
+                            width: MediaQuery.of(context).size.width * 0.5 - 20,
                           ),
                         ),
                         const SizedBox(width: 20),
@@ -72,19 +71,25 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             Container(
                               padding: const EdgeInsets.all(8.0),
                               width: MediaQuery.of(context).size.width * 0.4,
-                              height: 40.0,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.052,
                               decoration: BoxDecoration(
                                 color: const Color.fromARGB(255, 255, 160, 59),
-                                borderRadius: BorderRadius.circular(5.0),
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                              child: Center(
-                                child: Text(
-                                  'Рейтинг IMDB: ${movie.rating}',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 14.84,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Center(
+                                  child: Text(
+                                    'Рейтинг IMDB: ${movie.rating}',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.035,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -108,20 +113,24 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     padding: const EdgeInsets.all(8.0),
                                     width:
                                         MediaQuery.of(context).size.width * 0.4,
-                                    height: 40.0,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.052,
                                     decoration: BoxDecoration(
                                       color: const Color.fromARGB(
                                           255, 255, 160, 59),
-                                      borderRadius: BorderRadius.circular(5.0),
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        'Рейтинг KinoHUB: ${userRating.toInt()}',
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          fontSize: 14.8,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w500,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Center(
+                                        child: Text(
+                                          'Рейтинг KinoHUB: ${userRating.toInt()}',
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 14.8,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -132,7 +141,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             const SizedBox(height: 10),
                             Container(
                               width: MediaQuery.of(context).size.width * 0.4,
-                              height: 50.0,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.052,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 color: const Color.fromARGB(255, 50, 50, 50),
@@ -183,8 +193,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                             case CustomPopupMenu.delete:
                                               await removeFromAllList(
                                                   context, movie.id);
-                                              updateButtonName(
-                                                  'Додати до списку');
+                                              updateButtonName('Додати до');
                                               break;
                                             default:
                                           }
@@ -229,7 +238,9 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                     child: Container(
                                       width: MediaQuery.of(context).size.width *
                                           0.4,
-                                      height: 50.0,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.052,
                                       child: const Center(
                                         child: Text(
                                           'Трейлер',
@@ -252,7 +263,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                 Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.19,
-                                  height: 50.0,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.052,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     color: liked
@@ -279,7 +291,8 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                                 Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.19,
-                                  height: 50.0,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.052,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
                                     color: disliked
@@ -480,13 +493,14 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                               borderRadius: BorderRadius.circular(10.0),
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.4,
-                                height: 50.0,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.052,
                                 child: const Center(
                                   child: Text(
                                     'Додати відгук',
                                     style: TextStyle(
                                       color: Color(0xFFDEDEDE),
-                                      fontSize: 16.0,
+                                      fontSize: 15.5,
                                       fontWeight: FontWeight.normal,
                                     ),
                                   ),
@@ -523,154 +537,184 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             child: Text(
                               'Ішні відгуки:',
                               style: TextStyle(
-                                  fontSize: 19.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFFDEDEDE)),
+                                fontSize: 19.0,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFDEDEDE),
+                              ),
                             ),
                           ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: comments.length,
-                            itemBuilder: (context, index) {
-                              final comment = comments[index].data()
-                                  as Map<String, dynamic>;
-                              return FutureBuilder(
-                                future: FirebaseFirestore.instance
-                                    .collection('Users')
-                                    .doc(comment['userID'])
-                                    .get(),
-                                builder: (context,
-                                    AsyncSnapshot<DocumentSnapshot>
-                                        userSnapshot) {
-                                  if (userSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const SizedBox();
-                                  }
-                                  if (userSnapshot.hasError) {
-                                    return Text(
-                                        'Помилка при завантаженні користувача: ${userSnapshot.error}');
-                                  }
-                                  final userData = userSnapshot.data?.data()
-                                      as Map<String, dynamic>;
-                                  final nickname = userData['nickname'] ??
-                                      'Анонімний користувач';
-                                  final bool isPremium =
-                                      userData['isPremium'] ?? false;
-
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    padding: const EdgeInsets.all(3.0),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          const Color.fromARGB(255, 50, 50, 50),
-                                      borderRadius: BorderRadius.circular(8.0),
+                          comments.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Поки що немає відгуків',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Color(0xFFDEDEDE),
+                                      ),
                                     ),
-                                    child: ListTile(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                            pageBuilder: (context, animation,
-                                                secondaryAnimation) {
-                                              return FriendProfileView(
-                                                  friendId: comment['userID']);
-                                            },
-                                            transitionsBuilder: (context,
-                                                animation,
-                                                secondaryAnimation,
-                                                child) {
-                                              const begin = Offset(1.0, 0.0);
-                                              const end = Offset.zero;
-                                              const curve = Curves.ease;
+                                  ),
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: comments.length,
+                                  itemBuilder: (context, index) {
+                                    final comment = comments[index].data()
+                                        as Map<String, dynamic>;
+                                    return FutureBuilder(
+                                      future: FirebaseFirestore.instance
+                                          .collection('Users')
+                                          .doc(comment['userID'])
+                                          .get(),
+                                      builder: (context,
+                                          AsyncSnapshot<DocumentSnapshot>
+                                              userSnapshot) {
+                                        if (userSnapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const SizedBox();
+                                        }
+                                        if (userSnapshot.hasError) {
+                                          return Text(
+                                              'Помилка при завантаженні користувача: ${userSnapshot.error}');
+                                        }
+                                        final userData = userSnapshot.data
+                                            ?.data() as Map<String, dynamic>;
+                                        final nickname = userData['nickname'] ??
+                                            'Анонімний користувач';
+                                        final bool isPremium =
+                                            userData['isPremium'] ?? false;
 
-                                              var tween = Tween(
-                                                      begin: begin, end: end)
-                                                  .chain(
-                                                      CurveTween(curve: curve));
+                                        return Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          padding: const EdgeInsets.all(3.0),
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 50, 50, 50),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          child: ListTile(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                PageRouteBuilder(
+                                                  pageBuilder: (context,
+                                                      animation,
+                                                      secondaryAnimation) {
+                                                    return FriendProfileView(
+                                                        friendId:
+                                                            comment['userID']);
+                                                  },
+                                                  transitionsBuilder: (context,
+                                                      animation,
+                                                      secondaryAnimation,
+                                                      child) {
+                                                    const begin =
+                                                        Offset(1.0, 0.0);
+                                                    const end = Offset.zero;
+                                                    const curve = Curves.ease;
 
-                                              return SlideTransition(
-                                                position:
-                                                    animation.drive(tween),
-                                                child: child,
+                                                    var tween = Tween(
+                                                            begin: begin,
+                                                            end: end)
+                                                        .chain(CurveTween(
+                                                            curve: curve));
+
+                                                    return SlideTransition(
+                                                      position: animation
+                                                          .drive(tween),
+                                                      child: child,
+                                                    );
+                                                  },
+                                                  transitionDuration:
+                                                      const Duration(
+                                                          milliseconds: 500),
+                                                ),
                                               );
                                             },
-                                            transitionDuration: const Duration(
-                                                milliseconds: 500),
-                                          ),
-                                        );
-                                      },
-                                      leading: CircleAvatar(
-                                        radius: 27,
-                                        backgroundImage: NetworkImage(
-                                            userData['profile_image'] ?? ''),
-                                      ),
-                                      title: Row(
-                                        children: [
-                                          if (isPremium)
-                                            Row(
+                                            leading: CircleAvatar(
+                                              radius: 27,
+                                              backgroundImage: NetworkImage(
+                                                  userData['profile_image'] ??
+                                                      ''),
+                                            ),
+                                            title: Row(
                                               children: [
-                                                Text(
-                                                  '${nickname ?? 'Анонімний користувач'}',
-                                                  style: const TextStyle(
+                                                if (isPremium)
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        '${nickname ?? 'Анонімний користувач'}',
+                                                        style: const TextStyle(
+                                                          color:
+                                                              Color(0xFFDEDEDE),
+                                                          fontSize: 17.7,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 3),
+                                                      const Icon(
+                                                        Icons.workspace_premium,
+                                                        color: Color.fromARGB(
+                                                            255, 233, 156, 88),
+                                                        size: 24,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                if (!isPremium)
+                                                  Text(
+                                                    '${nickname ?? 'Анонімний користувач'}',
+                                                    style: const TextStyle(
                                                       color: Color(0xFFDEDEDE),
                                                       fontSize: 17.7,
                                                       fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                const SizedBox(width: 3),
-                                                const Icon(
-                                                  Icons.workspace_premium,
-                                                  color: Color.fromARGB(
-                                                      255, 233, 156, 88),
-                                                  size: 24,
-                                                ),
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
                                               ],
                                             ),
-                                          if (!isPremium)
-                                            Text(
-                                              '${nickname ?? 'Анонімний користувач'}',
+                                            subtitle: Text(
+                                              comment['com'] ?? '',
                                               style: const TextStyle(
-                                                  color: Color(0xFFDEDEDE),
-                                                  fontSize: 17.7,
-                                                  fontWeight: FontWeight.w600),
+                                                color: Color(0xFFDEDEDE),
+                                                fontSize: 16,
+                                              ),
                                             ),
-                                        ],
-                                      ),
-                                      subtitle: Text(
-                                        comment['com'] ?? '',
-                                        style: const TextStyle(
-                                          color: Color(0xFFDEDEDE),
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      trailing: user?.uid == comment['userID']
-                                          ? IconButton(
-                                              icon: const Icon(Icons.delete,
-                                                  color: Color.fromARGB(
-                                                      255, 242, 111, 50)),
-                                              onPressed: () async {
-                                                bool? result =
-                                                    await CustomDialogAlert
-                                                        .showConfirmationDialog(
-                                                  context,
-                                                  'Видалення відгуку',
-                                                  'Ви впевнені, що хочете видалити відгук?',
-                                                );
-                                                if (result != null && result) {
-                                                  deleteComment(comments[index]
-                                                      .reference);
-                                                } else {}
-                                              },
-                                            )
-                                          : null,
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                                            trailing: user?.uid ==
+                                                    comment['userID']
+                                                ? IconButton(
+                                                    icon: const Icon(
+                                                      Icons.delete,
+                                                      color: Color.fromARGB(
+                                                          255, 242, 111, 50),
+                                                    ),
+                                                    onPressed: () async {
+                                                      bool? result =
+                                                          await CustomDialogAlert
+                                                              .showConfirmationDialog(
+                                                        context,
+                                                        'Видалення відгуку',
+                                                        'Ви впевнені, що хочете видалити відгук?',
+                                                      );
+                                                      if (result != null &&
+                                                          result) {
+                                                        deleteComment(
+                                                            comments[index]
+                                                                .reference);
+                                                      } else {}
+                                                    },
+                                                  )
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
                         ],
                       );
                     },

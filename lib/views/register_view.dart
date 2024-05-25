@@ -38,7 +38,7 @@ class _RegistrationViewState extends State<RegistrationView> {
                   'Реєстрація нового користувача',
                   style: TextStyle(
                     color: Color(0xFFDEDEDE),
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -55,9 +55,20 @@ class _RegistrationViewState extends State<RegistrationView> {
                       foregroundColor: MaterialStateProperty.all(
                         const Color(0xFFDEDEDE),
                       ),
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
                     ),
                     onPressed: _pickImage,
-                    child: const Text('Оберіть фото профілю'),
+                    child: const Text(
+                      'Фото профілю',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -94,9 +105,20 @@ class _RegistrationViewState extends State<RegistrationView> {
                       foregroundColor: MaterialStateProperty.all(
                         const Color(0xFFDEDEDE),
                       ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
                     ),
                     onPressed: _registerUser,
-                    child: const Text('Реєстрація'),
+                    child: const Text(
+                      'Реєстрація',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -111,21 +133,21 @@ class _RegistrationViewState extends State<RegistrationView> {
     return GestureDetector(
       onTap: _pickImage,
       child: CircleAvatar(
-        radius: 50,
+        radius: 70,
         backgroundColor: Colors.grey[800],
         child: _image != null
             ? ClipRRect(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(70),
                 child: Image.file(
                   _image!,
-                  width: 100,
-                  height: 100,
+                  width: 140,
+                  height: 140,
                   fit: BoxFit.cover,
                 ),
               )
             : const Icon(
                 Icons.person,
-                size: 50,
+                size: 70,
                 color: Colors.white,
               ),
       ),
@@ -158,7 +180,7 @@ class _RegistrationViewState extends State<RegistrationView> {
   Future<File> _compressImage(File file) async {
     final image = img.decodeImage(file.readAsBytesSync());
     if (image != null) {
-      final compressedImage = img.encodeJpg(image, quality: 50);
+      final compressedImage = img.encodeJpg(image, quality: 30);
       final compressedImageFile = File(file.path)
         ..writeAsBytesSync(compressedImage);
       return compressedImageFile;
@@ -198,7 +220,7 @@ class _RegistrationViewState extends State<RegistrationView> {
       return;
     }
 
-    await saveUserDataToFirebase(nickname, imageUrl);
+    await saveUserDataToFirebase(nickname, imageUrl, isAdmin: false);
 
     Navigator.of(context).pushNamedAndRemoveUntil(
       mainMenuRoute,
@@ -219,7 +241,7 @@ class _RegistrationViewState extends State<RegistrationView> {
   }
 
   Future<void> saveUserDataToFirebase(String nickname, String imageUrl,
-      {bool isPremium = false}) async {
+      {bool isPremium = false, bool isAdmin = false}) async {
     final user = FirebaseAuth.instance.currentUser;
     final batch = FirebaseFirestore.instance.batch();
     final userRef =
@@ -236,6 +258,7 @@ class _RegistrationViewState extends State<RegistrationView> {
       'nickname': nickname,
       'profile_image': imageUrl,
       'isPremium': isPremium,
+      'isAdmin': isAdmin,
       'friends': [],
     });
 

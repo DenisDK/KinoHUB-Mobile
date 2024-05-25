@@ -116,8 +116,16 @@ class _UserProfileState extends State<UserProfile> {
                                   minimumSize: const Size(135, 45),
                                   backgroundColor: const Color(0xFF242729),
                                   foregroundColor: const Color(0xFFDEDEDE),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
                                 ),
-                                child: const Text('Змінити профіль'),
+                                child: const Text(
+                                  'Змінити профіль',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal),
+                                ),
                               ),
                             ],
                           ),
@@ -383,12 +391,21 @@ class _UserProfileState extends State<UserProfile> {
                                 minimumSize: const Size(200, 50),
                                 backgroundColor: const Color(0xFF242729),
                                 foregroundColor: const Color(0xFFDEDEDE),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10.0), // радіус закруглення кутів
+                                ),
                               ),
                               onPressed: () {
                                 showSearchFriendsDialog(
                                     context, _nicknameController, userData);
                               },
-                              child: const Text('Додати нового друга'),
+                              child: const Text(
+                                'Додати друга',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal),
+                              ),
                             ),
                             const SizedBox(height: 7), // Доданий відступ
                           ],

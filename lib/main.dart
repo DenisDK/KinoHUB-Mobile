@@ -21,7 +21,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: "api_key.env");
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  // Отримання токену для отримання повідомлень
+
   String? token = await messaging.getToken();
 
   runApp(
