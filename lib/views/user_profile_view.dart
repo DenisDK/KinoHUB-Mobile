@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -55,8 +56,8 @@ class _UserProfileState extends State<UserProfile> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(userData['profile_image'] ?? ''),
+                            backgroundImage: CachedNetworkImageProvider(
+                                userData['profile_image'] ?? ''),
                             radius: 75,
                           ),
                           const SizedBox(width: 20),
@@ -249,7 +250,7 @@ class _UserProfileState extends State<UserProfile> {
                                                     },
                                                     child: CircleAvatar(
                                                       backgroundImage:
-                                                          NetworkImage(
+                                                          CachedNetworkImageProvider(
                                                         friendData[
                                                                 'profile_image'] ??
                                                             '',
