@@ -26,7 +26,7 @@ class _MovieSearchScreenState extends State<MovieSearchScreen> {
   late TextEditingController _searchController;
   String? _selectedGenre;
   Timer? _debounce;
-  int _currentPage = 1; // Змінна для відстеження поточної сторінки результатів
+  int _currentPage = 1;
 
   @override
   void initState() {

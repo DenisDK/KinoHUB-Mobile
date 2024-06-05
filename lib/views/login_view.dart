@@ -37,7 +37,6 @@ class LoginView extends StatelessWidget {
                         TextSpan(
                           text: 'Kino',
                           style: TextStyle(
-                            // Стиль "Kino"
                             color: Color(0xFFD3D3D3),
                             fontWeight: FontWeight.bold,
                           ),
@@ -62,29 +61,24 @@ class LoginView extends StatelessWidget {
                       color: Color(0xFF959595),
                     ),
                   ),
-
-                  const SizedBox(height: 25), // Відступ між текстом та кнопкою
+                  const SizedBox(height: 25),
                   ElevatedButton(
                     onPressed: () async {
                       bool userLogin = await signInWithGoogle();
                       if (userLogin) {
-                        // Отримання поточного користувача
                         final user = FirebaseAuth.instance.currentUser;
 
-                        // Перевірка наявності нікнейму та колекцій фільмів у базі даних Firebase
                         DocumentSnapshot userData = await FirebaseFirestore
                             .instance
                             .collection('Users')
                             .doc(user?.uid)
                             .get();
                         if (userData.exists && userData['nickname'] != null) {
-                          // Якщо є нікнейм та колекції фільмів, переходимо на головну сторінку
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             mainMenuRoute,
                             (route) => false,
                           );
                         } else {
-                          // Якщо немає нікнейму або колекцій фільмів, переходимо на сторінку реєстрації
                           Navigator.pushReplacement(
                             context,
                             CustomPageRoute(
@@ -102,12 +96,11 @@ class LoginView extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(200, 50),
-                      backgroundColor: const Color(0xFF242729), // колір кнопки
+                      backgroundColor: const Color(0xFF242729),
                       foregroundColor: const Color(0xFFDEDEDE),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            10.0), // радіус закруглення кутів
-                      ), // колір тексту
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
                     ),
                     child: const Text('Увійти через Google'),
                   ),

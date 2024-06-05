@@ -14,18 +14,18 @@ class CustomDialogAlert {
       pageBuilder: (BuildContext context, Animation<double> animation,
           Animation<double> secondaryAnimation) {
         return AlertDialog(
-          backgroundColor: Colors.grey[800], // Колір фону
+          backgroundColor: Colors.grey[800], 
           title: Text(
             title,
             style: const TextStyle(
-              color: Color(0xFFDEDEDE), // Колір тексту заголовку
+              color: Color(0xFFDEDEDE), 
               fontFamily: 'Roboto',
             ),
           ),
           content: Text(
             content,
             style: const TextStyle(
-              color: Color(0xFFDEDEDE), // Колір тексту контенту
+              color: Color(0xFFDEDEDE), 
               fontFamily: 'Roboto',
             ),
           ),
@@ -38,7 +38,7 @@ class CustomDialogAlert {
                 'Ні',
                 style: TextStyle(
                   color: Color.fromARGB(
-                      255, 242, 111, 50), // Колір тексту кнопки "Ні"
+                      255, 242, 111, 50),
                   fontFamily: 'Roboto',
                 ),
               ),
@@ -51,7 +51,7 @@ class CustomDialogAlert {
                 'Так',
                 style: TextStyle(
                   color: Color.fromARGB(
-                      255, 242, 111, 50), // Колір тексту кнопки "Так"
+                      255, 242, 111, 50),
                   fontFamily: 'Roboto',
                 ),
               ),

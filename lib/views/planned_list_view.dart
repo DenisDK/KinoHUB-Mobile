@@ -44,7 +44,7 @@ class _PlannedMoviesState extends State<PlannedMovies> {
         future: movies,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -87,7 +87,7 @@ class _PlannedMoviesState extends State<PlannedMovies> {
                       children: [
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(
+                            borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(10.0),
                             ),
                             child: Image.network(

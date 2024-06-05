@@ -318,7 +318,7 @@ class FriendProfileView extends StatelessWidget {
         },
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(200, 50),
-          backgroundColor: const Color(0xFF242729), // колір кнопки
+          backgroundColor: const Color(0xFF242729),
           foregroundColor: const Color(0xFFDEDEDE),
         ),
         child: const Text(

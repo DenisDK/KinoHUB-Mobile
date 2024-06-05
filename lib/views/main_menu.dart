@@ -58,7 +58,6 @@ class _MainMenuState extends State<MainMenu> {
         final List<Genre> fetchedGenres = [];
 
         for (var genre in jsonData['genres']) {
-          // Додавання жанру тільки якщо він не входить до списку виключених
           if (!excludedGenres.contains(genre['name'])) {
             fetchedGenres.add(Genre(id: genre['id'], name: genre['name']));
           }
@@ -244,7 +243,7 @@ class _MainMenuState extends State<MainMenu> {
                                 ),
                               ],
                             ),
-                            child: Center(
+                            child: const Center(
                               child: Icon(
                                 Icons.refresh,
                                 color: Color(0xFFDEDEDE),

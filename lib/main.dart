@@ -99,9 +99,7 @@ class HomePage extends StatelessWidget {
               ),
             );
         }
-        // Додано інструкцію return на випадок, якщо жоден з випадків не виконається
-        return const SizedBox
-            .shrink(); // або будь-який інший віджет, який ви хочете повернути
+        return const SizedBox.shrink();
       },
     );
   }

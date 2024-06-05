@@ -33,19 +33,14 @@ Future<bool> signOut() async {
   try {
     final FirebaseAuth auth = FirebaseAuth.instance;
 
-    // Вихід з облікового запису Google
+
     final GoogleSignIn googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
 
-    // Вихід з облікового запису Facebook
-    // final FacebookLogin facebookLogin = FacebookLogin();
-    // await facebookLogin.logOut();
-
-    // Вихід з Firebase
     await auth.signOut();
 
-    return true; // Успішно вийшли з облікового запису
+    return true; 
   } catch (error) {
-    return false; // Не вдалося вийти з облікового запису
+    return false; 
   }
 }

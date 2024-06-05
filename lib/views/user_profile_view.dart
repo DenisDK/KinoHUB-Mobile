@@ -285,7 +285,7 @@ class _UserProfileState extends State<UserProfile> {
                                                                 style:
                                                                     TextStyle(
                                                                   color: Color(
-                                                                      0xFFDEDEDE), // Задаємо колір тексту заголовка
+                                                                      0xFFDEDEDE),
                                                                 ),
                                                               ),
                                                               content:
@@ -294,7 +294,7 @@ class _UserProfileState extends State<UserProfile> {
                                                                 style:
                                                                     TextStyle(
                                                                   color: Color(
-                                                                      0xFFDEDEDE), // Задаємо колір тексту контенту
+                                                                      0xFFDEDEDE),
                                                                 ),
                                                               ),
                                                               actions: [
@@ -393,8 +393,7 @@ class _UserProfileState extends State<UserProfile> {
                                 backgroundColor: const Color(0xFF242729),
                                 foregroundColor: const Color(0xFFDEDEDE),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      10.0), // радіус закруглення кутів
+                                  borderRadius: BorderRadius.circular(10.0),
                                 ),
                               ),
                               onPressed: () {
@@ -408,7 +407,7 @@ class _UserProfileState extends State<UserProfile> {
                                     fontWeight: FontWeight.normal),
                               ),
                             ),
-                            const SizedBox(height: 7), // Доданий відступ
+                            const SizedBox(height: 7),
                           ],
                         ),
                       ),

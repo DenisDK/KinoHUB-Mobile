@@ -36,8 +36,8 @@ class CustomPopupMenuItem extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.0),
             border: Border.all(
-              color: const Color(0xFF464646), // Колір обрамлення
-              width: 2.0, // Ширина обрамлення
+              color: const Color(0xFF464646),
+              width: 2.0,
             ),
           ),
           child: Center(
@@ -45,7 +45,7 @@ class CustomPopupMenuItem extends StatelessWidget {
               text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: const Color(0xFFDEDEDE), // Колір тексту
+                color: const Color(0xFFDEDEDE),
               ),
             ),
           ),
