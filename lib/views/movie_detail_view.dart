@@ -1,3 +1,5 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -488,7 +490,7 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                             ),
                             child: InkWell(
                               onTap: () async {
-                                addComment();
+                                addComment(widget.movieId);
                               },
                               borderRadius: BorderRadius.circular(10.0),
                               child: SizedBox(
@@ -911,37 +913,35 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
     }
   }
 
-  void addComment() {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userID = user.uid;
-      final commentText = commentController.text.trim();
-      if (commentText.isNotEmpty) {
-        FirebaseFirestore.instance
-            .collection('Comments')
-            .doc(widget.movieId.toString())
-            .collection('comment')
-            .add({
-          'com': commentText,
-          'userID': userID,
-          'timestamp': DateTime.now(),
-        }).then((value) {
-          commentController.clear();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Коментар додано успішно!')),
-          );
-        }).catchError((error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Помилка: $error')),
-          );
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Будь ласка, введіть коментар!')),
-        );
-      }
+  Future<void> addComment(int movieId) async {
+  final user = FirebaseAuth.instance.currentUser;
+  final commentText = commentController.text.trim();
+  final batch = FirebaseFirestore.instance.batch();
+  if (user != null) {
+    final userID = user.uid;
+    if (commentText.isNotEmpty) {
+      var commentRef = FirebaseFirestore.instance.collection('Comments').doc(movieId.toString()); 
+      batch.set(commentRef, {
+        'filmid': movieId
+      });
+      batch.set(commentRef.collection('comment').doc(), {
+        'com': commentText,
+        'userID': userID,
+        'timestamp': DateTime.now(),
+      });
+      await batch.commit();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Коментар додано успішно!')),
+      );
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Будь ласка, введіть коментар!')),
+      );
     }
   }
+}
+
 
   void deleteComment(DocumentReference commentRef) {
     commentRef.delete().then((_) {
